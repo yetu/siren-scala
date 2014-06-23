@@ -5,10 +5,19 @@ A Scala library for producing Siren entities from your domain model objects and 
 
 This library is still very much a work-in-progress, so expect its API to change.
 
-#Usage
+#Setup
 
-We haven't provided any binary releases of _siren-scala_ yet, so at the moment, you need to add a
-source dependency to use it.
+In order to use _siren-scala_ library you must add resolver to _sonatype_ server and library dependency.
+
+##Resolvers
+
+    resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+    
+##Library dependency
+
+    libraryDependencies += "com.yetu" %% "siren-scala" % "0.1.0"
+
+#Usage
 
 _siren-scala_ provides a rich model of the types described in the Siren specification. The top-level
 type is `Entity.RootEntity`, which represents a Siren root entity. 
