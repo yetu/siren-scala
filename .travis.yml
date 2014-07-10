@@ -8,3 +8,4 @@ notifications:
   email:
     recipients:
       - boris.malensek@yetu.com
+script: "sbt coveralls"

@@ -31,6 +31,8 @@ scalariformSettings ++ Seq(
 
 ScoverageSbtPlugin.instrumentSettings
 
+CoverallsPlugin.coverallsSettings
+
 publishMavenStyle := true
 
 publishTo := {
