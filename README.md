@@ -8,6 +8,8 @@ A Scala library for producing Siren entities from your domain model objects and 
 
 This library is still very much a work-in-progress, so expect its API to change.
 
+Currently the library supports Scala 2.10 and 2.11 versions.
+
 #Setup
 
 In order to use _siren-scala_ library you must add resolver to _sonatype_ server and library dependency.
@@ -18,7 +20,7 @@ In order to use _siren-scala_ library you must add resolver to _sonatype_ server
     
 ##Library dependency
 
-    libraryDependencies += "com.yetu" %% "siren-scala" % "0.1.0"
+    libraryDependencies += "com.yetu" %% "siren-scala" % "0.2.0"
 
 #Usage
 

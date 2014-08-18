@@ -2,12 +2,15 @@ import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import com.typesafe.sbt.SbtScalariform.scalariformSettings
 import xerial.sbt.Sonatype.SonatypeKeys._
+import CoverallsPlugin.CoverallsKeys._
 
 sonatypeSettings
 
 name := "siren-scala"
 
 organization := "com.yetu"
+
+version := "0.2.0"
 
 scalaVersion := "2.11.2"
 
@@ -36,6 +39,12 @@ scalariformSettings ++ Seq(
 instrumentSettings
 
 CoverallsPlugin.coverallsSettings
+
+coverallsTokenFile := ".coveralls.token"
+
+ScoverageKeys.minimumCoverage := 90
+
+ScoverageKeys.failOnMinimumCoverage := true
 
 publishMavenStyle := true
 

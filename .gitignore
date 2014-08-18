@@ -5,6 +5,7 @@ project/plugins/src_managed/
 project/plugins/project/
 \#*\#
 *~
+.coveralls.token
 # IDEA Ignores
 *.iml
 *.ipr
