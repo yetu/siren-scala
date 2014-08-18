@@ -27,7 +27,7 @@ package com.yetu.siren
 import org.scalatest.{ MustMatchers, WordSpec }
 import scalaz.NonEmptyList
 import scalaz.syntax.std.option._
-import scalaz.syntax.id._
+import scalaz.syntax.nel._
 import spray.json._
 import json.sprayjson.SirenJsonProtocol
 import model._
@@ -158,7 +158,7 @@ class ExampleSpec extends WordSpec with MustMatchers {
           |    { "rel": [ "previous" ], "href": "http://api.x.io/orders/41" },
           |    { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
           |  ]
-          |}""".stripMargin.asJson
+          |}""".stripMargin.parseJson
       order.rootEntity.toJson mustEqual expectedJson
     }
 

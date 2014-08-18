@@ -1,5 +1,7 @@
+resolvers += Classpaths.sbtPluginReleases
+
 // Plugin for scoverage
-addSbtPlugin("com.sksamuel.scoverage" %% "sbt-scoverage" % "0.95.7")
+addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.7.1")
 
 // Plugin for publishing scoverage results to coveralls
 addSbtPlugin("com.sksamuel.scoverage" %% "sbt-coveralls" % "0.0.5")

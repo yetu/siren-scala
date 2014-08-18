@@ -9,15 +9,19 @@ name := "siren-scala"
 
 organization := "com.yetu"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.2"
 
-scalacOptions += "-feature"
+crossScalaVersions := Seq("2.11.2", "2.10.4")
+
+scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
+
+resolvers += "spray" at "http://repo.spray.io/"
 
 libraryDependencies ++= Seq(
-  "com.chuusai" %% "shapeless" % "1.2.4",
-  "org.scalaz" %% "scalaz-core" % "7.0.5",
-  "io.spray" %%  "spray-json" % "1.2.5",
-  "org.scalatest" %% "scalatest" % "2.0" % "test"
+"com.chuusai" %% "shapeless" % "1.2.4",
+"org.scalaz" %% "scalaz-core" % "7.1.0",
+"io.spray" %%  "spray-json" % "1.2.6",
+"org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 
 scalariformSettings ++ Seq(
@@ -29,7 +33,7 @@ scalariformSettings ++ Seq(
       .setPreference(RewriteArrowSymbols, true)
 )
 
-ScoverageSbtPlugin.instrumentSettings
+instrumentSettings
 
 CoverallsPlugin.coverallsSettings
 
