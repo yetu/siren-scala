@@ -42,7 +42,7 @@ CoverallsPlugin.coverallsSettings
 
 coverallsTokenFile := ".coveralls.token"
 
-ScoverageKeys.minimumCoverage := 90
+ScoverageKeys.minimumCoverage := 80
 
 ScoverageKeys.failOnMinimumCoverage := true
 

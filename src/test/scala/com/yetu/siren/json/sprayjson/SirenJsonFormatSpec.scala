@@ -32,7 +32,7 @@ import spray.json._
 class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
 
   import scalaz.std.option._
-  import scalaz.syntax.id._
+  import scalaz.syntax.nel._
   import scalaz.NonEmptyList
   import com.yetu.siren.model._
 
@@ -45,7 +45,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
         "foo": false,
         "bar": null
       }
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
   private val props = NonEmptyList(
     Property("orderNumber", Property.NumberValue(42)),
     Property("itemCount", Property.NumberValue(3)),
@@ -59,7 +59,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
     Property("status", Property.StringValue("pending")))
 
   private val classesJson =
-    """[ "info", "customer" ]""".stripMargin.asJson
+    """[ "info", "customer" ]""".stripMargin.parseJson
   private val classes = NonEmptyList("info", "customer")
 
   private val embeddedLinkJson =
@@ -69,7 +69,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
         "rel": [ "http://x.io/rels/order-items" ],
         "href": "http://api.x.io/orders/42/items"
       }
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
   private val embeddedLink = Entity.EmbeddedLink(
     rel = "http://x.io/rels/order-items".wrapNel,
     href = "http://api.x.io/orders/42/items",
@@ -89,7 +89,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
           { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
         ]
       }
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
   private val embeddedRepresentation = Entity.EmbeddedRepresentation(
     rel = "http://x.io/rels/customer".wrapNel,
     classes = some(NonEmptyList("info", "customer")),
@@ -113,7 +113,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
           { "name": "quantity", "type": "number" }
         ]
       }
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
 
   private val linksJson =
     """
@@ -122,7 +122,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
         { "rel": [ "previous" ], "href": "http://api.x.io/orders/41" },
         { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
       ]
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
   private val links = NonEmptyList(
     Link(href = "http://api.x.io/orders/42", rel = "self".wrapNel),
     Link(href = "http://api.x.io/orders/41", rel = "previous".wrapNel),
@@ -196,7 +196,7 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
               { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
             ]
           }
-    """.stripMargin.asJson
+    """.stripMargin.parseJson
 
   "SirenJsonFormat" must {
     "serialize Siren properties" in {
