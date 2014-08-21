@@ -106,7 +106,8 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
         ],
         "links": [
           { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
-        ]
+        ],
+        "title": "Customer information"
       }
     """.stripMargin.parseJson
   private val embeddedRepresentation = Entity.EmbeddedRepresentation(
@@ -134,7 +135,8 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
         ))
       )
     )),
-    links = some(Link(href = "http://api.x.io/customers/pj123", rel = "self".wrapNel).wrapNel)
+    links = some(Link(href = "http://api.x.io/customers/pj123", rel = "self".wrapNel).wrapNel),
+    title = some("Customer information")
   )
 
   private val actionJson =
@@ -184,7 +186,8 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
     properties = some(properties),
     entities = some(List(embeddedLink, embeddedRepresentation)),
     actions = some(action.wrapNel),
-    links = some(links)
+    links = some(links),
+    title = some("Order number 42")
   )
 
   val entityJson =
@@ -230,7 +233,8 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
                 ],
                 "links": [
                   { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
-                ]
+                ],
+                "title": "Customer information"
               }
             ],
             "actions": [
@@ -251,7 +255,8 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
               { "rel": [ "self" ], "href": "http://api.x.io/orders/42" },
               { "rel": [ "previous" ], "href": "http://api.x.io/orders/41" },
               { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
-            ]
+            ],
+            "title": "Order number 42"
           }
     """.stripMargin.parseJson
 
@@ -308,6 +313,17 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
     }
     "deserialize a Siren link" in {
       linksJson.convertTo[Seq[Link]] mustEqual links.list
+    }
+    "throw DeserializionException" when {
+      "deserialize an empty array of Siren links" in {
+        intercept[DeserializationException] { "[null]".parseJson.convertTo[Links] }
+      }
+      "deserialize non-array json" in {
+        intercept[DeserializationException] { """{ "foo": "bar" }""".parseJson.convertTo[Links] }
+      }
+      "deserialize wrong type of Siren properties" in {
+        intercept[DeserializationException] { """{ "xyz" : { "foo": "bar" } }""".parseJson.convertTo[Properties] }
+      }
     }
     "serialize a complete Siren entity with embedded linked and fully represented sub-entities correctly" in {
       entity.toJson mustEqual entityJson
