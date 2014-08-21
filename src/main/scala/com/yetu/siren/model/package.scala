@@ -282,6 +282,7 @@ package object model {
       rel: Rels,
       classes: Option[Classes] = None,
       properties: Option[Properties] = None,
+      entities: Option[Entities] = None,
       actions: Option[Actions] = None,
       links: Option[Links] = None,
       title: Option[String] = None) extends EmbeddedEntity with EntityRepresentation

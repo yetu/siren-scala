@@ -10,8 +10,6 @@ name := "siren-scala"
 
 organization := "com.yetu"
 
-version := "0.2.0"
-
 scalaVersion := "2.11.2"
 
 crossScalaVersions := Seq("2.11.2", "2.10.4")

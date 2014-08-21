@@ -85,17 +85,55 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
           "customerId": "pj123",
           "name": "Peter Joseph"
         },
+        "entities": [
+          {
+            "class": [ "company" ],
+            "rel": [ "http://x.io/rels/company" ],
+            "href": "http://api.x.io/customer/pj123/company"
+          }
+        ],
+        "actions": [
+          {
+            "name": "set-name",
+            "title": "Set Customer's Name",
+            "method": "POST",
+            "href": "http://api.x.io/customer/pj123/name",
+            "type": "application/json",
+            "fields": [
+              { "name": "name", "type": "text" }
+            ]
+          }
+        ],
         "links": [
           { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
         ]
       }
     """.stripMargin.parseJson
   private val embeddedRepresentation = Entity.EmbeddedRepresentation(
-    rel = "http://x.io/rels/customer".wrapNel,
     classes = some(NonEmptyList("info", "customer")),
+    rel = "http://x.io/rels/customer".wrapNel,
     properties = some(NonEmptyList(
       Property("customerId", Property.StringValue("pj123")),
       Property("name", Property.StringValue("Peter Joseph")))),
+    entities = some(List(
+      Entity.EmbeddedLink(
+        classes = some("company".wrapNel),
+        rel = "http://x.io/rels/company".wrapNel,
+        href = "http://api.x.io/customer/pj123/company"
+      )
+    )),
+    actions = some(NonEmptyList(
+      Action(
+        name = "set-name",
+        href = "http://api.x.io/customer/pj123/name",
+        title = some("Set Customer's Name"),
+        method = some(Action.Method.POST),
+        `type` = some(Action.Encoding.`application/json`),
+        fields = some(NonEmptyList(
+          Action.Field(name = "name", `type` = Action.Field.Type.`text`)
+        ))
+      )
+    )),
     links = some(Link(href = "http://api.x.io/customers/pj123", rel = "self".wrapNel).wrapNel)
   )
 
@@ -171,6 +209,25 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
                   "customerId": "pj123",
                   "name": "Peter Joseph"
                 },
+                "entities": [
+                  {
+                    "class": [ "company" ],
+                    "rel": [ "http://x.io/rels/company" ],
+                    "href": "http://api.x.io/customer/pj123/company"
+                  }
+                ],
+                "actions": [
+                  {
+                    "name": "set-name",
+                    "title": "Set Customer's Name",
+                    "method": "POST",
+                    "href": "http://api.x.io/customer/pj123/name",
+                    "type": "application/json",
+                    "fields": [
+                      { "name": "name", "type": "text" }
+                    ]
+                  }
+                ],
                 "links": [
                   { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
                 ]

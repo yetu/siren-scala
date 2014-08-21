@@ -119,19 +119,21 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
         val rel = (obj \ FieldNames.`rel`).asStringNel
         val classes = (obj \? FieldNames.`class`) map (_.asStringNel)
         val properties = (obj \? FieldNames.`properties`) map (_.convertTo[Properties])
+        val entities = (obj \? FieldNames.`entities`) map (_.convertTo[Entities])
         val actions = (obj \? FieldNames.`actions`) map (_.convertTo[Actions])
         val links = (obj \? FieldNames.`links`) map (_.convertTo[Links])
         val title = (obj \? FieldNames.`title`) map (_.asString)
-        EmbeddedRepresentation(rel, classes, properties, actions, links = links, title)
+        EmbeddedRepresentation(rel, classes, properties, entities, actions, links, title)
       }
       override def write(entity: EmbeddedRepresentation): JsValue = {
         val classes = entity.classes map (FieldNames.`class` -> _.list.toJson)
         val properties = entity.properties map (FieldNames.`properties` -> _.toJson)
+        val entities = entity.entities map (FieldNames.`entities` -> _.toJson)
         val actions = entity.actions map (FieldNames.`actions` -> _.list.toJson)
         val links = entity.links map (FieldNames.`links` -> _.toJson)
         val title = entity.title map (FieldNames.`title` -> _.toJson)
-        val rels = some(FieldNames.`rel` -> entity.rel.list.toJson)
-        JsObject(collectSome(classes, properties, actions, links, title, rels))
+        val rel = some(FieldNames.`rel` -> entity.rel.list.toJson)
+        JsObject(collectSome(classes, properties, entities, actions, links, title, rel))
       }
     }
 
