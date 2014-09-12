@@ -45,25 +45,6 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   import scalaz.NonEmptyList
 
   /**
-   * Constants for all the JSON field names used in Siren.
-   */
-  private object FieldNames {
-    val `class` = "class"
-    val `properties` = "properties"
-    val `entities` = "entities"
-    val `actions` = "actions"
-    val `links` = "links"
-    val `title` = "title"
-    val `rel` = "rel"
-    val `href` = "href"
-    val `name` = "name"
-    val `method` = "method"
-    val `type` = "type"
-    val `fields` = "fields"
-    val `value` = "value"
-  }
-
-  /**
    * Spray-JSON format for serializing and deserializing Siren entities.
    */
   implicit val entityFormat: RootJsonFormat[RootEntity] = new RootJsonFormat[RootEntity] {
