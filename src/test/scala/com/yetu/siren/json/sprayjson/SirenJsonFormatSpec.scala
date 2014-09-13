@@ -29,7 +29,7 @@ package sprayjson
 import org.scalatest.{ MustMatchers, WordSpec }
 import spray.json._
 
-class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
+class SirenJsonFormatSpec extends JsonBaseSpec with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
 
   import scalaz.std.option._
   import scalaz.syntax.nel._
@@ -139,47 +139,9 @@ class SirenJsonFormatSpec extends WordSpec with MustMatchers with SirenJsonForma
     title = some("Customer information")
   )
 
-  private val actionJson =
-    """
-      {
-        "name": "add-item",
-        "title": "Add Item",
-        "method": "POST",
-        "href": "http://api.x.io/orders/42/items",
-        "type": "application/x-www-form-urlencoded",
-        "fields": [
-          { "name": "orderNumber", "type": "hidden", "value": "42" },
-          { "name": "productCode", "type": "text" },
-          { "name": "quantity", "type": "number" }
-        ]
-      }
-    """.stripMargin.parseJson
+  private val actionJson = actionJsonString.parseJson
 
-  private val linksJson =
-    """
-      [
-        { "rel": [ "self" ], "href": "http://api.x.io/orders/42" },
-        { "rel": [ "previous" ], "href": "http://api.x.io/orders/41" },
-        { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
-      ]
-    """.stripMargin.parseJson
-  private val links = NonEmptyList(
-    Link(href = "http://api.x.io/orders/42", rel = "self".wrapNel),
-    Link(href = "http://api.x.io/orders/41", rel = "previous".wrapNel),
-    Link(href = "http://api.x.io/orders/43", rel = "next".wrapNel)
-  )
-
-  private val action = Action(
-    name = "add-item",
-    href = "http://api.x.io/orders/42/items",
-    title = some("Add Item"),
-    method = some(Action.Method.POST),
-    `type` = some(Action.Encoding.`application/x-www-form-urlencoded`),
-    fields = some(NonEmptyList(
-      Action.Field(name = "orderNumber", `type` = Action.Field.Type.`hidden`, value = some("42")),
-      Action.Field(name = "productCode", `type` = Action.Field.Type.`text`),
-      Action.Field(name = "quantity", `type` = Action.Field.Type.`number`)))
-  )
+  private val linksJson = linksJsonString.parseJson
 
   private val entity = Entity.RootEntity(
     classes = some("order".wrapNel),
