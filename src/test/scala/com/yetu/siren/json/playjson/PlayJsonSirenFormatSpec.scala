@@ -8,6 +8,8 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec with DiagrammedAssertions wit
 
   import play.api.libs.json._
 
+  private val propsJson = Json.parse(propsJsonString)
+  private val classesJson = Json.parse(classesJsonString)
   private val linksJson = Json.parse(linksJsonString)
   private val actionJson = Json.parse(actionJsonString)
 
@@ -22,6 +24,14 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec with DiagrammedAssertions wit
 
   "serialize a Siren action" in {
     assert(Json.toJson(action) == actionJson)
+  }
+
+  "serialize Siren properties" in {
+    assert(Json.toJson(props) == propsJson)
+  }
+
+  "serialize Siren classes" in {
+    assert(Json.toJson(classes.list) == classesJson)
   }
 
 }

@@ -36,31 +36,14 @@ class SirenJsonFormatSpec extends JsonBaseSpec with MustMatchers with SirenJsonF
   import scalaz.NonEmptyList
   import com.yetu.siren.model._
 
-  private val propsJson =
-    """
-      {
-        "orderNumber": 42,
-        "itemCount": 3,
-        "status": "pending",
-        "foo": false,
-        "bar": null
-      }
-    """.stripMargin.parseJson
-  private val props = NonEmptyList(
-    Property("orderNumber", Property.NumberValue(42)),
-    Property("itemCount", Property.NumberValue(3)),
-    Property("status", Property.StringValue("pending")),
-    Property("foo", Property.BooleanValue(value = false)),
-    Property("bar", Property.NullValue))
+  private val propsJson = propsJsonString.parseJson
 
   private val properties = NonEmptyList(
     Property("orderNumber", Property.NumberValue(42)),
     Property("itemCount", Property.NumberValue(3)),
     Property("status", Property.StringValue("pending")))
 
-  private val classesJson =
-    """[ "info", "customer" ]""".stripMargin.parseJson
-  private val classes = NonEmptyList("info", "customer")
+  private val classesJson = classesJsonString.parseJson
 
   private val embeddedLinkJson =
     """

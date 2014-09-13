@@ -9,6 +9,22 @@ trait PlayJsonSirenFormat {
   import scalaz.std.option._
   import play.api.libs.json._
 
+  implicit val propertValueWriter: Writes[Property.Value] = new Writes[Property.Value] {
+    override def writes(value: Property.Value): JsValue = value match {
+      case Property.StringValue(s)  ⇒ JsString(s)
+      case Property.NumberValue(n)  ⇒ JsNumber(n)
+      case Property.BooleanValue(b) ⇒ JsBoolean(b)
+      case Property.NullValue       ⇒ JsNull
+    }
+  }
+
+  implicit val propertiesWriter: Writes[Properties] = new Writes[Properties] {
+    override def writes(properties: Properties): JsValue = {
+      val fields = properties.list.map (p ⇒ p.name -> Json.toJson(p.value))
+      JsObject(fields)
+    }
+  }
+
   /**
    * Play JSON writer for Siren action methods.
    */
@@ -61,6 +77,10 @@ trait PlayJsonSirenFormat {
       val fields = action.fields map (FieldNames.`fields` -> Json.toJson(_))
       JsObject(collectSome(name, classes, title, href, method, `type`, fields))
     }
+  }
+
+  implicit val linksWriter: Writes[Links] = Writes {
+    (links: Links) ⇒ Json.toJson(links.list)
   }
 
   /**
