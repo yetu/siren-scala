@@ -26,184 +26,26 @@ package com.yetu.siren
 package json
 package sprayjson
 
-import org.scalatest.{ MustMatchers, WordSpec }
+import org.scalatest.MustMatchers
 import spray.json._
 
 class SirenJsonFormatSpec extends JsonBaseSpec with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
 
-  import scalaz.std.option._
-  import scalaz.syntax.nel._
-  import scalaz.NonEmptyList
   import com.yetu.siren.model._
 
   private val propsJson = propsJsonString.parseJson
 
-  private val properties = NonEmptyList(
-    Property("orderNumber", Property.NumberValue(42)),
-    Property("itemCount", Property.NumberValue(3)),
-    Property("status", Property.StringValue("pending")))
-
   private val classesJson = classesJsonString.parseJson
 
-  private val embeddedLinkJson =
-    """
-      {
-        "class": [ "items", "collection" ],
-        "rel": [ "http://x.io/rels/order-items" ],
-        "href": "http://api.x.io/orders/42/items"
-      }
-    """.stripMargin.parseJson
-  private val embeddedLink = Entity.EmbeddedLink(
-    rel = "http://x.io/rels/order-items".wrapNel,
-    href = "http://api.x.io/orders/42/items",
-    classes = some(NonEmptyList("items", "collection"))
-  )
+  private val embeddedLinkJson = embeddedLinkJsonString.parseJson
 
-  private val embeddedRepresentationJson =
-    """
-      {
-        "class": [ "info", "customer" ],
-        "rel": [ "http://x.io/rels/customer" ],
-        "properties": {
-          "customerId": "pj123",
-          "name": "Peter Joseph"
-        },
-        "entities": [
-          {
-            "class": [ "company" ],
-            "rel": [ "http://x.io/rels/company" ],
-            "href": "http://api.x.io/customer/pj123/company"
-          }
-        ],
-        "actions": [
-          {
-            "name": "set-name",
-            "title": "Set Customer's Name",
-            "method": "POST",
-            "href": "http://api.x.io/customer/pj123/name",
-            "type": "application/json",
-            "fields": [
-              { "name": "name", "type": "text" }
-            ]
-          }
-        ],
-        "links": [
-          { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
-        ],
-        "title": "Customer information"
-      }
-    """.stripMargin.parseJson
-  private val embeddedRepresentation = Entity.EmbeddedRepresentation(
-    classes = some(NonEmptyList("info", "customer")),
-    rel = "http://x.io/rels/customer".wrapNel,
-    properties = some(NonEmptyList(
-      Property("customerId", Property.StringValue("pj123")),
-      Property("name", Property.StringValue("Peter Joseph")))),
-    entities = some(List(
-      Entity.EmbeddedLink(
-        classes = some("company".wrapNel),
-        rel = "http://x.io/rels/company".wrapNel,
-        href = "http://api.x.io/customer/pj123/company"
-      )
-    )),
-    actions = some(NonEmptyList(
-      Action(
-        name = "set-name",
-        href = "http://api.x.io/customer/pj123/name",
-        title = some("Set Customer's Name"),
-        method = some(Action.Method.POST),
-        `type` = some(Action.Encoding.`application/json`),
-        fields = some(NonEmptyList(
-          Action.Field(name = "name", `type` = Action.Field.Type.`text`)
-        ))
-      )
-    )),
-    links = some(Link(href = "http://api.x.io/customers/pj123", rel = "self".wrapNel).wrapNel),
-    title = some("Customer information")
-  )
+  private val embeddedRepresentationJson = embeddedRepresentationJsonString.parseJson
 
   private val actionJson = actionJsonString.parseJson
 
   private val linksJson = linksJsonString.parseJson
 
-  private val entity = Entity.RootEntity(
-    classes = some("order".wrapNel),
-    properties = some(properties),
-    entities = some(List(embeddedLink, embeddedRepresentation)),
-    actions = some(action.wrapNel),
-    links = some(links),
-    title = some("Order number 42")
-  )
-
-  val entityJson =
-    """
-          {
-            "class": [ "order" ],
-            "properties": {
-                "orderNumber": 42,
-                "itemCount": 3,
-                "status": "pending"
-            },
-            "entities": [
-              {
-                "class": [ "items", "collection" ],
-                "rel": [ "http://x.io/rels/order-items" ],
-                "href": "http://api.x.io/orders/42/items"
-              },
-              {
-                "class": [ "info", "customer" ],
-                "rel": [ "http://x.io/rels/customer" ],
-                "properties": {
-                  "customerId": "pj123",
-                  "name": "Peter Joseph"
-                },
-                "entities": [
-                  {
-                    "class": [ "company" ],
-                    "rel": [ "http://x.io/rels/company" ],
-                    "href": "http://api.x.io/customer/pj123/company"
-                  }
-                ],
-                "actions": [
-                  {
-                    "name": "set-name",
-                    "title": "Set Customer's Name",
-                    "method": "POST",
-                    "href": "http://api.x.io/customer/pj123/name",
-                    "type": "application/json",
-                    "fields": [
-                      { "name": "name", "type": "text" }
-                    ]
-                  }
-                ],
-                "links": [
-                  { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
-                ],
-                "title": "Customer information"
-              }
-            ],
-            "actions": [
-              {
-                "name": "add-item",
-                "title": "Add Item",
-                "method": "POST",
-                "href": "http://api.x.io/orders/42/items",
-                "type": "application/x-www-form-urlencoded",
-                "fields": [
-                  { "name": "orderNumber", "type": "hidden", "value": "42" },
-                  { "name": "productCode", "type": "text" },
-                  { "name": "quantity", "type": "number" }
-                ]
-              }
-            ],
-            "links": [
-              { "rel": [ "self" ], "href": "http://api.x.io/orders/42" },
-              { "rel": [ "previous" ], "href": "http://api.x.io/orders/41" },
-              { "rel": [ "next" ], "href": "http://api.x.io/orders/43" }
-            ],
-            "title": "Order number 42"
-          }
-    """.stripMargin.parseJson
+  val entityJson = entityJsonString.parseJson
 
   "SirenJsonFormat" must {
     "serialize Siren properties" in {

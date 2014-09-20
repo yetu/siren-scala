@@ -30,7 +30,6 @@ import spray.json._
 import com.yetu.siren.model.Action.{ Fields, Encoding }
 import com.yetu.siren.model.Action.Field.Type
 import scala.util.Try
-import com.yetu.siren.model
 
 /**
  * JSON serialization and deserialization of Siren entities.
