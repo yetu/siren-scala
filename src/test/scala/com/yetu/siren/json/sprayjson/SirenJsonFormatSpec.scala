@@ -29,23 +29,11 @@ package sprayjson
 import org.scalatest.MustMatchers
 import spray.json._
 
-class SirenJsonFormatSpec extends JsonBaseSpec with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
+class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with SirenJsonFormat with DefaultJsonProtocol {
 
   import com.yetu.siren.model._
 
-  private val propsJson = propsJsonString.parseJson
-
-  private val classesJson = classesJsonString.parseJson
-
-  private val embeddedLinkJson = embeddedLinkJsonString.parseJson
-
-  private val embeddedRepresentationJson = embeddedRepresentationJsonString.parseJson
-
-  private val actionJson = actionJsonString.parseJson
-
-  private val linksJson = linksJsonString.parseJson
-
-  val entityJson = entityJsonString.parseJson
+  override protected def parseJson(jsonString: String) = jsonString.parseJson
 
   "SirenJsonFormat" must {
     "serialize Siren properties" in {

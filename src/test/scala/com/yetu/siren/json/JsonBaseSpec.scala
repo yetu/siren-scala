@@ -1,14 +1,30 @@
 package com.yetu.siren.json
 
-import com.yetu.siren.model.{ Entity, Property, Action, Link }
+import com.yetu.siren.model.{ Action, Entity, Link, Property }
 import org.scalatest.WordSpec
 
 import scalaz.NonEmptyList
 import scalaz.std.option._
 
-trait JsonBaseSpec extends WordSpec {
+trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   import scalaz.syntax.nel._
+
+  protected def parseJson(jsonString: String): JsonBaseType
+
+  protected lazy val propsJson = parseJson(propsJsonString)
+
+  protected lazy val classesJson = parseJson(classesJsonString)
+
+  protected lazy val embeddedLinkJson = parseJson(embeddedLinkJsonString)
+
+  protected lazy val embeddedRepresentationJson = parseJson(embeddedRepresentationJsonString)
+
+  protected lazy val actionJson = parseJson(actionJsonString)
+
+  protected lazy val linksJson = parseJson(linksJsonString)
+
+  protected lazy val entityJson = parseJson(entityJsonString)
 
   protected lazy val embeddedLinkJsonString =
     """
