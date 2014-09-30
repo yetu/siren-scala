@@ -30,7 +30,6 @@ import spray.json._
 import com.yetu.siren.model.Action.{ Fields, Encoding }
 import com.yetu.siren.model.Action.Field.Type
 import scala.util.Try
-import com.yetu.siren.model
 
 /**
  * JSON serialization and deserialization of Siren entities.
@@ -43,25 +42,6 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   import SprayJsonReadSupport._
   import scalaz.std.option._
   import scalaz.NonEmptyList
-
-  /**
-   * Constants for all the JSON field names used in Siren.
-   */
-  private object FieldNames {
-    val `class` = "class"
-    val `properties` = "properties"
-    val `entities` = "entities"
-    val `actions` = "actions"
-    val `links` = "links"
-    val `title` = "title"
-    val `rel` = "rel"
-    val `href` = "href"
-    val `name` = "name"
-    val `method` = "method"
-    val `type` = "type"
-    val `fields` = "fields"
-    val `value` = "value"
-  }
 
   /**
    * Spray-JSON format for serializing and deserializing Siren entities.
@@ -338,13 +318,5 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
       JsObject(collectSome(rels, href, title))
     }
   }
-
-  /**
-   * Collects only those of the given options that are defined, removing the others.
-   * @param opts one or more options of type A
-   * @tparam A the type of the given options
-   */
-  private def collectSome[A](opts: Option[A]*): List[A] =
-    (opts collect { case Some(field) ⇒ field }).toList
 
 }
