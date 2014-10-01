@@ -158,3 +158,5 @@ trait PlayJsonSirenFormat {
   private def jsObject(fields: Option[(String, JsValue)]*) = JsObject(collectSome(fields: _*))
 
 }
+
+object PlayJsonSirenFormat extends PlayJsonSirenFormat
