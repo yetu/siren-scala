@@ -32,6 +32,7 @@ import spray.json._
 import json.sprayjson.SirenJsonProtocol
 import model._
 import Entity.{ EmbeddedRepresentation, EmbeddedLink, RootEntity }
+import scala.language.implicitConversions
 
 class ExampleSpec extends WordSpec with MustMatchers {
 
@@ -41,77 +42,78 @@ class ExampleSpec extends WordSpec with MustMatchers {
 
   case class Order(orderNumber: Int, itemCount: Int, status: String, items: Seq[Item], customer: Customer)
 
-  implicit val orderSirenWriter = new SirenRootEntityWriter[Order] {
-    override def toSiren(order: Order)(implicit ctx: SirenContext) = {
-      RootEntity(
-        classes = "order".wrapNel.some,
-        properties = NonEmptyList(
-          Property("orderNumber", Property.NumberValue(order.orderNumber)),
-          Property("itemCount", Property.NumberValue(order.itemCount)),
-          Property("status", Property.StringValue(order.status))
-        ).some,
-        entities = List(
-          EmbeddedLink(
-            classes = NonEmptyList("items", "collection").some,
-            rel = "http://x.io/rels/order-items".wrapNel,
-            href = s"${ctx.baseUri}/orders/42/items"
-          ),
-          EmbeddedRepresentation(
-            classes = NonEmptyList("info", "customer").some,
-            rel = "http://x.io/rels/customer".wrapNel,
-            properties = NonEmptyList(
-              Property("customerId", Property.StringValue(order.customer.customerId)),
-              Property("name", Property.StringValue(order.customer.name))
-            ).some,
-            links = Link(
+  implicit def orderSirenWriter(implicit baseUri: String): SirenRootEntityWriter[Order] =
+    new SirenRootEntityWriter[Order] {
+      override def toSiren(order: Order) = {
+        RootEntity(
+          classes = "order".wrapNel.some,
+          properties = NonEmptyList(
+            Property("orderNumber", Property.NumberValue(order.orderNumber)),
+            Property("itemCount", Property.NumberValue(order.itemCount)),
+            Property("status", Property.StringValue(order.status))
+          ).some,
+          entities = List(
+            EmbeddedLink(
+              classes = NonEmptyList("items", "collection").some,
+              rel = "http://x.io/rels/order-items".wrapNel,
+              href = s"$baseUri/orders/42/items"
+            ),
+            EmbeddedRepresentation(
+              classes = NonEmptyList("info", "customer").some,
+              rel = "http://x.io/rels/customer".wrapNel,
+              properties = NonEmptyList(
+                Property("customerId", Property.StringValue(order.customer.customerId)),
+                Property("name", Property.StringValue(order.customer.name))
+              ).some,
+              links = Link(
+                rel = "self".wrapNel,
+                href = s"$baseUri/customers/${order.customer.customerId}"
+              ).wrapNel.some
+            )
+          ).some,
+          actions = Action(
+            name = "add-item",
+            title = "Add Item".some,
+            method = Action.Method.POST.some,
+            href = s"$baseUri/orders/${order.orderNumber}/items",
+            `type` = Action.Encoding.`application/x-www-form-urlencoded`.some,
+            fields = NonEmptyList(
+              Action.Field(
+                name = "orderNumber",
+                `type` = Action.Field.Type.`hidden`,
+                value = order.orderNumber.toString.some
+              ),
+              Action.Field(
+                name = "productCode",
+                `type` = Action.Field.Type.`text`
+              ),
+              Action.Field(
+                name = "quantity",
+                `type` = Action.Field.Type.`number`
+              )
+            ).some
+          ).wrapNel.some,
+          links = NonEmptyList(
+            Link(
               rel = "self".wrapNel,
-              href = s"${ctx.baseUri}/customers/${order.customer.customerId}"
-            ).wrapNel.some
-          )
-        ).some,
-        actions = Action(
-          name = "add-item",
-          title = "Add Item".some,
-          method = Action.Method.POST.some,
-          href = s"${ctx.baseUri}/orders/${order.orderNumber}/items",
-          `type` = Action.Encoding.`application/x-www-form-urlencoded`.some,
-          fields = NonEmptyList(
-            Action.Field(
-              name = "orderNumber",
-              `type` = Action.Field.Type.`hidden`,
-              value = order.orderNumber.toString.some
+              href = s"$baseUri/orders/${order.orderNumber}"
             ),
-            Action.Field(
-              name = "productCode",
-              `type` = Action.Field.Type.`text`
+            Link(
+              rel = "previous".wrapNel,
+              href = s"$baseUri/orders/${order.orderNumber - 1}"
             ),
-            Action.Field(
-              name = "quantity",
-              `type` = Action.Field.Type.`number`
+            Link(
+              rel = "next".wrapNel,
+              href = s"$baseUri/orders/${order.orderNumber + 1}"
             )
           ).some
-        ).wrapNel.some,
-        links = NonEmptyList(
-          Link(
-            rel = "self".wrapNel,
-            href = s"${ctx.baseUri}/orders/${order.orderNumber}"
-          ),
-          Link(
-            rel = "previous".wrapNel,
-            href = s"${ctx.baseUri}/orders/${order.orderNumber - 1}"
-          ),
-          Link(
-            rel = "next".wrapNel,
-            href = s"${ctx.baseUri}/orders/${order.orderNumber + 1}"
-          )
-        ).some
-      )
+        )
+      }
     }
-  }
 
   "Instance of types that belong to the SirenRootEntityWriter type class" must {
     "produce the specified Siren JSON representation" in new SirenJsonProtocol {
-      implicit val ctx = new SirenContext { val baseUri: String = "http://api.x.io" }
+      implicit val baseUri: String = "http://api.x.io"
       val order = Order(42, 3, "pending", Seq(Item("ABC", 1)), Customer("pj123", "Peter Joseph"))
       val expectedJson =
         """{

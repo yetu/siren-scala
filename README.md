@@ -64,7 +64,7 @@ you will be able to easily convert instances of that case class to Siren root en
     case class Person(name: String, age: Int)
     
     implicit val personSirenWriter = new SirenRootEntityWriter[Person] {
-      override def toSiren(order: Order)(implicit ctx: SirenContext) = {
+      override def toSiren(order: Order) = {
         ???      
       }
     }
