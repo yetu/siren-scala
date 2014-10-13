@@ -31,13 +31,28 @@ The whole Siren model available with the following import:
 
     import com.yetu.siren.model._
 
-Moreover, the library provides serialization of Siren root entities to JSON using Spray-JSON:
+Moreover, the library provides serialization of Siren root entities to JSON using either 
+Spray-JSON or Play-JSON. Note that you need to explicitly add a dependency to either 
+spray-json or play-json in your project, as siren-scala doesn't pull them into your
+project transitively.
 
+## Spray-JSON                                                                                                                
+                                                                                                                
     import com.yetu.siren.json.sprayjson.SirenJsonProtocol._
     import spray.json._
     
     val rootEntity: Entity.RootEntity = ...
     rootEntity.toJson
+    
+## Play-JSON
+
+    import com.yetu.siren.json.playjson.PlayJsonSirenFormat._
+    import play.api.libs.json._
+    
+    val rootEntity: Entity.RootEntity = ...
+    Json.toJson(rootEntity)
+
+## Creating Siren root entities
 
 In order to enable you to create Siren representations for your resources, _siren-scala_ provides a
 type class, `SirenRootEntityWriter`. Provide an instance of this type class for your case class, and 
