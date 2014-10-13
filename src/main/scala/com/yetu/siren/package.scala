@@ -29,18 +29,6 @@ package object siren {
   import model.Entity.RootEntity
 
   /**
-   * Context that provides Siren writers with information they can use for creating
-   * Siren representations of objects.
-   */
-  trait SirenContext {
-    /**
-     * The base URI of the API.
-     * @return
-     */
-    def baseUri: String
-  }
-
-  /**
    * Type class whose instances are able to be written as Siren root entities.
    * @tparam A the type that is an instance of this type class
    */
@@ -48,9 +36,8 @@ package object siren {
     /**
      * Returns a Siren [[model.Entity.RootEntity]] representation of the given object.
      * @param a the object to be written as a Siren [[model.Entity.RootEntity]]
-     * @param ctx the [[SirenContext]] to be used for writing the root entity
      */
-    def toSiren(a: A)(implicit ctx: SirenContext): RootEntity
+    def toSiren(a: A): RootEntity
   }
 
   /**
@@ -61,7 +48,7 @@ package object siren {
     /**
      * Returns a Siren [[model.Entity.RootEntity]] from the wrapped object.
      */
-    def rootEntity(implicit writer: SirenRootEntityWriter[A], ctx: SirenContext): RootEntity = {
+    def rootEntity(implicit writer: SirenRootEntityWriter[A]): RootEntity = {
       Siren.asRootEntity(a)
     }
   }
@@ -73,7 +60,7 @@ package object siren {
     /**
      * Returns a Siren [[model.Entity.RootEntity]] from the provided value
      */
-    def asRootEntity[A](a: A)(implicit writer: SirenRootEntityWriter[A], ctx: SirenContext): RootEntity =
+    def asRootEntity[A](a: A)(implicit writer: SirenRootEntityWriter[A]): RootEntity =
       writer toSiren a
   }
 
