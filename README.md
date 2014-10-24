@@ -36,6 +36,10 @@ Spray-JSON or Play-JSON. Note that you need to explicitly add a dependency to ei
 spray-json or play-json in your project, as siren-scala doesn't pull them into your
 project transitively.
 
+Siren-Scala supports both converting from its model types to a JSON AST and the other way round,
+so that it can be used for implementing both a web API using Siren as well as a client for a 
+Siren-based web API.
+
 ## Spray-JSON                                                                                                                
                                                                                                                 
     import com.yetu.siren.json.sprayjson.SirenJsonProtocol._
@@ -44,6 +48,9 @@ project transitively.
     val rootEntity: Entity.RootEntity = ...
     rootEntity.toJson
     
+    val json: JsValue = ???
+    json.convertTo[Entity.RootEntity]
+    
 ## Play-JSON
 
     import com.yetu.siren.json.playjson.PlayJsonSirenFormat._
@@ -51,6 +58,9 @@ project transitively.
     
     val rootEntity: Entity.RootEntity = ...
     Json.toJson(rootEntity)
+    
+    val json: JsValue = ???
+    Json.fromJson[Entity.RootEntity](json)
 
 ## Creating Siren root entities
 

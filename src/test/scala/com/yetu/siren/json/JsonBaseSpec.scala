@@ -12,11 +12,15 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   protected lazy val propsJson = parseJson(propsJsonString)
 
+  protected lazy val invalidPropsJson = parseJson(invalidPropsJsonString)
+
   protected lazy val classesJson = parseJson(classesJsonString)
 
   protected lazy val embeddedLinkJson = parseJson(embeddedLinkJsonString)
 
   protected lazy val embeddedRepresentationJson = parseJson(embeddedRepresentationJsonString)
+
+  protected lazy val invalidEmbeddedRepresentationJson = parseJson(invalidEmbeddedRepresentationJsonString)
 
   protected lazy val actionJson = parseJson(actionJsonString)
 
@@ -74,6 +78,30 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
       }
     """.stripMargin
 
+  protected lazy val invalidEmbeddedRepresentationJsonString =
+    """
+      {
+        "class": [ "info", "customer" ],
+        "rel": [ "http://x.io/rels/customer" ],
+        "properties": {
+          "customerId": [],
+          "name": {}
+        },
+        "actions": [
+          {
+            "name": true,
+            "href": "http://api.x.io/customer/pj123/name",
+            "fields": [
+              { "name": "name", "type": "text" }
+            ]
+          }
+        ],
+        "links": [
+          { "rel": [ "self" ], "href": "http://api.x.io/customers/pj123" }
+        ]
+      }
+    """.stripMargin
+
   protected lazy val embeddedRepresentation = Entity.EmbeddedRepresentation(
     classes = some(List("info", "customer")),
     rel = List("http://x.io/rels/customer"),
@@ -117,7 +145,7 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   protected lazy val classesJsonString =
     """[ "info", "customer" ]""".stripMargin
-  protected lazy val classes = NonEmptyList("info", "customer")
+  protected lazy val classes = List("info", "customer")
 
   protected lazy val links = List(
     Link(href = "http://api.x.io/orders/42", rel = "self" :: Nil),
@@ -144,6 +172,17 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
         "itemCount": 3,
         "status": "pending",
         "foo": false,
+        "bar": null
+      }
+    """.stripMargin
+
+  protected lazy val invalidPropsJsonString =
+    """
+      {
+        "orderNumber": 42,
+        "itemCount": [],
+        "status": "pending",
+        "foo": {},
         "bar": null
       }
     """.stripMargin
