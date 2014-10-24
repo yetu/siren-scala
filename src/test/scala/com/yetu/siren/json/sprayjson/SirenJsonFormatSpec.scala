@@ -84,17 +84,17 @@ class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with S
       actionJson.convertTo[Action] mustEqual action
     }
     "serialize a Siren link" in {
-      links.list.toJson mustEqual linksJson
+      links.toJson mustEqual linksJson
     }
     "deserialize a Siren link" in {
-      linksJson.convertTo[Seq[Link]] mustEqual links.list
+      linksJson.convertTo[Seq[Link]] mustEqual links
     }
     "throw DeserializionException" when {
       "deserialize an empty array of Siren links" in {
-        intercept[DeserializationException] { "[null]".parseJson.convertTo[Links] }
+        intercept[DeserializationException] { "[null]".parseJson.convertTo[Seq[Link]] }
       }
       "deserialize non-array json" in {
-        intercept[DeserializationException] { """{ "foo": "bar" }""".parseJson.convertTo[Links] }
+        intercept[DeserializationException] { """{ "foo": "bar" }""".parseJson.convertTo[Seq[Link]] }
       }
       "deserialize wrong type of Siren properties" in {
         intercept[DeserializationException] { """{ "xyz" : { "foo": "bar" } }""".parseJson.convertTo[Properties] }

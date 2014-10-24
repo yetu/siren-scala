@@ -13,7 +13,7 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue] with DiagrammedAsser
 
   "PlayJsonSirenFormat" must {
     "serialize a Siren link" in {
-      assert(Json.toJson(links.list) == linksJson)
+      assert(Json.toJson(links) == linksJson)
     }
 
     "serialize a Siren action method" in {

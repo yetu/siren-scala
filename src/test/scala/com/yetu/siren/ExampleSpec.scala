@@ -25,14 +25,11 @@
 package com.yetu.siren
 
 import org.scalatest.{ MustMatchers, WordSpec }
-import scalaz.NonEmptyList
 import scalaz.syntax.std.option._
-import scalaz.syntax.nel._
 import spray.json._
 import json.sprayjson.SirenJsonProtocol
 import model._
 import Entity.{ EmbeddedRepresentation, EmbeddedLink, RootEntity }
-import scala.language.implicitConversions
 
 class ExampleSpec extends WordSpec with MustMatchers {
 
@@ -46,38 +43,38 @@ class ExampleSpec extends WordSpec with MustMatchers {
     new SirenRootEntityWriter[Order] {
       override def toSiren(order: Order) = {
         RootEntity(
-          classes = "order".wrapNel.some,
-          properties = NonEmptyList(
+          classes = List("order").some,
+          properties = List(
             Property("orderNumber", Property.NumberValue(order.orderNumber)),
             Property("itemCount", Property.NumberValue(order.itemCount)),
             Property("status", Property.StringValue(order.status))
           ).some,
           entities = List(
             EmbeddedLink(
-              classes = NonEmptyList("items", "collection").some,
-              rel = "http://x.io/rels/order-items".wrapNel,
+              classes = List("items", "collection").some,
+              rel = "http://x.io/rels/order-items" :: Nil,
               href = s"$baseUri/orders/42/items"
             ),
             EmbeddedRepresentation(
-              classes = NonEmptyList("info", "customer").some,
-              rel = "http://x.io/rels/customer".wrapNel,
-              properties = NonEmptyList(
+              classes = List("info", "customer").some,
+              rel = "http://x.io/rels/customer" :: Nil,
+              properties = List(
                 Property("customerId", Property.StringValue(order.customer.customerId)),
                 Property("name", Property.StringValue(order.customer.name))
               ).some,
-              links = Link(
-                rel = "self".wrapNel,
+              links = List(Link(
+                rel = "self" :: Nil,
                 href = s"$baseUri/customers/${order.customer.customerId}"
-              ).wrapNel.some
+              )).some
             )
           ).some,
-          actions = Action(
+          actions = List(Action(
             name = "add-item",
             title = "Add Item".some,
             method = Action.Method.POST.some,
             href = s"$baseUri/orders/${order.orderNumber}/items",
             `type` = Action.Encoding.`application/x-www-form-urlencoded`.some,
-            fields = NonEmptyList(
+            fields = List(
               Action.Field(
                 name = "orderNumber",
                 `type` = Action.Field.Type.`hidden`,
@@ -92,18 +89,18 @@ class ExampleSpec extends WordSpec with MustMatchers {
                 `type` = Action.Field.Type.`number`
               )
             ).some
-          ).wrapNel.some,
-          links = NonEmptyList(
+          )).some,
+          links = List(
             Link(
-              rel = "self".wrapNel,
+              rel = "self" :: Nil,
               href = s"$baseUri/orders/${order.orderNumber}"
             ),
             Link(
-              rel = "previous".wrapNel,
+              rel = "previous" :: Nil,
               href = s"$baseUri/orders/${order.orderNumber - 1}"
             ),
             Link(
-              rel = "next".wrapNel,
+              rel = "next" :: Nil,
               href = s"$baseUri/orders/${order.orderNumber + 1}"
             )
           ).some

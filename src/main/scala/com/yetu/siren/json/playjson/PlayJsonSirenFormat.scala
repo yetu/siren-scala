@@ -1,14 +1,10 @@
 package com.yetu.siren.json
 package playjson
 
-import com.yetu.siren.model
-import com.yetu.siren.model.Entity.{ RootEntity, EmbeddedRepresentation, EmbeddedLink }
-
-import scalaz.NonEmptyList
-
 trait PlayJsonSirenFormat {
 
-  import model._
+  import com.yetu.siren.model._
+  import Entity._
   import scalaz.std.option._
   import play.api.libs.json._
 
@@ -80,16 +76,9 @@ trait PlayJsonSirenFormat {
    */
   implicit val propertiesWriter: Writes[Properties] = new Writes[Properties] {
     override def writes(properties: Properties): JsValue = {
-      val fields = properties.list.map (p ⇒ p.name -> Json.toJson(p.value))
+      val fields = properties.map (p ⇒ p.name -> Json.toJson(p.value))
       JsObject(fields)
     }
-  }
-
-  /**
-   * Play-JSON writer for [[NonEmptyList]]s.
-   */
-  implicit def nonEmptyListWriter[A: Writes]: Writes[NonEmptyList[A]] = Writes {
-    (xs: NonEmptyList[A]) ⇒ Json.toJson(xs.list)
   }
 
   /**
