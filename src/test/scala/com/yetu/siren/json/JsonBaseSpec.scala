@@ -1,14 +1,12 @@
 package com.yetu.siren.json
 
-import com.yetu.siren.model.{ Action, Entity, Link, Property }
+import com.yetu.siren.model._
 import org.scalatest.WordSpec
 
 import scalaz.NonEmptyList
 import scalaz.std.option._
 
 trait JsonBaseSpec[JsonBaseType] extends WordSpec {
-
-  import scalaz.syntax.nel._
 
   protected def parseJson(jsonString: String): JsonBaseType
 
@@ -36,9 +34,9 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """.stripMargin
 
   protected lazy val embeddedLink = Entity.EmbeddedLink(
-    rel = "http://x.io/rels/order-items".wrapNel,
+    rel = List("http://x.io/rels/order-items"),
     href = "http://api.x.io/orders/42/items",
-    classes = some(NonEmptyList("items", "collection"))
+    classes = some(List("items", "collection"))
   )
 
   protected lazy val embeddedRepresentationJsonString =
@@ -77,42 +75,42 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """.stripMargin
 
   protected lazy val embeddedRepresentation = Entity.EmbeddedRepresentation(
-    classes = some(NonEmptyList("info", "customer")),
-    rel = "http://x.io/rels/customer".wrapNel,
-    properties = some(NonEmptyList(
+    classes = some(List("info", "customer")),
+    rel = List("http://x.io/rels/customer"),
+    properties = some(List(
       Property("customerId", Property.StringValue("pj123")),
       Property("name", Property.StringValue("Peter Joseph")))),
     entities = some(List(
       Entity.EmbeddedLink(
-        classes = some("company".wrapNel),
-        rel = "http://x.io/rels/company".wrapNel,
+        classes = some("company" :: Nil),
+        rel = "http://x.io/rels/company" :: Nil,
         href = "http://api.x.io/customer/pj123/company"
       )
     )),
-    actions = some(NonEmptyList(
+    actions = some(List(
       Action(
         name = "set-name",
         href = "http://api.x.io/customer/pj123/name",
         title = some("Set Customer's Name"),
         method = some(Action.Method.POST),
         `type` = some(Action.Encoding.`application/json`),
-        fields = some(NonEmptyList(
+        fields = some(List(
           Action.Field(name = "name", `type` = Action.Field.Type.`text`)
         ))
       )
     )),
-    links = some(Link(href = "http://api.x.io/customers/pj123", rel = "self".wrapNel).wrapNel),
+    links = some(List(Link(href = "http://api.x.io/customers/pj123", rel = "self" :: Nil))),
     title = some("Customer information")
   )
 
-  protected lazy val props = NonEmptyList(
+  protected lazy val props: Properties = List(
     Property("orderNumber", Property.NumberValue(42)),
     Property("itemCount", Property.NumberValue(3)),
     Property("status", Property.StringValue("pending")),
     Property("foo", Property.BooleanValue(value = false)),
     Property("bar", Property.NullValue))
 
-  protected val properties = NonEmptyList(
+  protected val properties = List(
     Property("orderNumber", Property.NumberValue(42)),
     Property("itemCount", Property.NumberValue(3)),
     Property("status", Property.StringValue("pending")))
@@ -121,10 +119,10 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """[ "info", "customer" ]""".stripMargin
   protected lazy val classes = NonEmptyList("info", "customer")
 
-  protected lazy val links = NonEmptyList(
-    Link(href = "http://api.x.io/orders/42", rel = "self".wrapNel),
-    Link(href = "http://api.x.io/orders/41", rel = "previous".wrapNel),
-    Link(href = "http://api.x.io/orders/43", rel = "next".wrapNel)
+  protected lazy val links = List(
+    Link(href = "http://api.x.io/orders/42", rel = "self" :: Nil),
+    Link(href = "http://api.x.io/orders/41", rel = "previous" :: Nil),
+    Link(href = "http://api.x.io/orders/43", rel = "next" :: Nil)
   )
 
   protected lazy val action = Action(
@@ -133,7 +131,7 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     title = some("Add Item"),
     method = some(Action.Method.POST),
     `type` = some(Action.Encoding.`application/x-www-form-urlencoded`),
-    fields = some(NonEmptyList(
+    fields = some(List(
       Action.Field(name = "orderNumber", `type` = Action.Field.Type.`hidden`, value = some("42")),
       Action.Field(name = "productCode", `type` = Action.Field.Type.`text`),
       Action.Field(name = "quantity", `type` = Action.Field.Type.`number`)))
@@ -176,10 +174,10 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """.stripMargin
 
   protected val entity = Entity.RootEntity(
-    classes = some("order".wrapNel),
+    classes = some("order" :: Nil),
     properties = some(properties),
     entities = some(List(embeddedLink, embeddedRepresentation)),
-    actions = some(action.wrapNel),
+    actions = some(action :: Nil),
     links = some(links),
     title = some("Order number 42")
   )

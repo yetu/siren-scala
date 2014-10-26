@@ -27,7 +27,7 @@ package json
 package sprayjson
 
 import spray.json._
-import com.yetu.siren.model.Action.{ Fields, Encoding }
+import com.yetu.siren.model.Action._
 import com.yetu.siren.model.Action.Field.Type
 import scala.util.Try
 
@@ -41,7 +41,6 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   import Property.Value
   import SprayJsonReadSupport._
   import scalaz.std.option._
-  import scalaz.NonEmptyList
 
   /**
    * Spray-JSON format for serializing and deserializing Siren entities.
@@ -50,21 +49,21 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
 
     override def read(json: JsValue): RootEntity = {
       val obj = json.asJsObject
-      val classes = (obj \? FieldNames.`class`) map (_.asStringNel)
+      val classes = (obj \? FieldNames.`class`) map (_.asStringSeq)
       val properties = (obj \? FieldNames.`properties`) map (_.convertTo[Properties])
-      val entities = (obj \? FieldNames.`entities`) map (_.convertTo[Entities])
-      val actions = (obj \? FieldNames.`actions`) map (_.convertTo[Actions])
-      val links = (obj \? FieldNames.`links`) map (_.convertTo[Links])
+      val entities = (obj \? FieldNames.`entities`) map (_.convertTo[Seq[EmbeddedEntity]])
+      val actions = (obj \? FieldNames.`actions`) map (_.convertTo[Seq[Action]])
+      val links = (obj \? FieldNames.`links`) map (_.convertTo[Seq[Link]])
       val title = (obj \? FieldNames.`title`) map (_.asString)
       RootEntity(classes, properties, entities, actions, links, title)
     }
 
     override def write(entity: RootEntity): JsValue = {
-      val classes = entity.classes map (FieldNames.`class` -> _.list.toJson)
+      val classes = entity.classes map (FieldNames.`class` -> _.toJson)
       val properties = entity.properties map (FieldNames.`properties` -> _.toJson)
       val entities = entity.entities map (FieldNames.`entities` -> _.toJson)
-      val actions = entity.actions map (FieldNames.`actions` -> _.list.toJson)
-      val links = entity.links map (FieldNames.`links` -> _.list.toJson)
+      val actions = entity.actions map (FieldNames.`actions` -> _.toJson)
+      val links = entity.links map (FieldNames.`links` -> _.toJson)
       val title = entity.title map (FieldNames.`title` -> _.toJson)
       JsObject(collectSome(classes, properties, entities, actions, links, title))
     }
@@ -76,14 +75,14 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   implicit val embeddedLinkFormat: RootJsonFormat[Entity.EmbeddedLink] = new RootJsonFormat[Entity.EmbeddedLink] {
     override def read(json: JsValue): Entity.EmbeddedLink = {
       val obj = json.asJsObject
-      val rel = (obj \ FieldNames.`rel`).asStringNel
+      val rel = (obj \ FieldNames.`rel`).asStringSeq
       val href = (obj \ FieldNames.`href`).asString
-      val classes = (obj \? FieldNames.`class`) map (_.asStringNel)
+      val classes = (obj \? FieldNames.`class`) map (_.asStringSeq)
       EmbeddedLink(rel = rel, href = href, classes = classes)
     }
     override def write(entity: Entity.EmbeddedLink): JsValue = {
-      val classes = entity.classes map (FieldNames.`class` -> _.list.toJson)
-      val rel = some(FieldNames.`rel` -> entity.rel.list.toJson)
+      val classes = entity.classes map (FieldNames.`class` -> _.toJson)
+      val rel = some(FieldNames.`rel` -> entity.rel.toJson)
       val href = some(FieldNames.`href` -> entity.href.toJson)
       JsObject(collectSome(classes, rel, href))
     }
@@ -96,23 +95,23 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
     new RootJsonFormat[EmbeddedRepresentation] {
       override def read(json: JsValue): EmbeddedRepresentation = {
         val obj = json.asJsObject
-        val rel = (obj \ FieldNames.`rel`).asStringNel
-        val classes = (obj \? FieldNames.`class`) map (_.asStringNel)
+        val rel = (obj \ FieldNames.`rel`).asStringSeq
+        val classes = (obj \? FieldNames.`class`) map (_.asStringSeq)
         val properties = (obj \? FieldNames.`properties`) map (_.convertTo[Properties])
-        val entities = (obj \? FieldNames.`entities`) map (_.convertTo[Entities])
-        val actions = (obj \? FieldNames.`actions`) map (_.convertTo[Actions])
-        val links = (obj \? FieldNames.`links`) map (_.convertTo[Links])
+        val entities = (obj \? FieldNames.`entities`) map (_.convertTo[Seq[EmbeddedEntity]])
+        val actions = (obj \? FieldNames.`actions`) map (_.convertTo[Seq[Action]])
+        val links = (obj \? FieldNames.`links`) map (_.convertTo[Seq[Link]])
         val title = (obj \? FieldNames.`title`) map (_.asString)
         EmbeddedRepresentation(rel, classes, properties, entities, actions, links, title)
       }
       override def write(entity: EmbeddedRepresentation): JsValue = {
-        val classes = entity.classes map (FieldNames.`class` -> _.list.toJson)
+        val classes = entity.classes map (FieldNames.`class` -> _.toJson)
         val properties = entity.properties map (FieldNames.`properties` -> _.toJson)
         val entities = entity.entities map (FieldNames.`entities` -> _.toJson)
-        val actions = entity.actions map (FieldNames.`actions` -> _.list.toJson)
+        val actions = entity.actions map (FieldNames.`actions` -> _.toJson)
         val links = entity.links map (FieldNames.`links` -> _.toJson)
         val title = entity.title map (FieldNames.`title` -> _.toJson)
-        val rel = some(FieldNames.`rel` -> entity.rel.list.toJson)
+        val rel = some(FieldNames.`rel` -> entity.rel.toJson)
         JsObject(collectSome(classes, properties, entities, actions, links, title, rel))
       }
     }
@@ -131,40 +130,6 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   }
 
   /**
-   * Spray-JSON format for serializing and deserializing links.
-   */
-  implicit val linksFormat: RootJsonFormat[Links] = new RootJsonFormat[Links] {
-    override def read(json: JsValue) = {
-      val links = json match {
-        case JsArray(items) ⇒ items.toList match {
-          case head :: tail ⇒ NonEmptyList.nel(head, tail)
-          case Nil          ⇒ throwDesEx(s"Array of links must not be empty")
-        }
-        case _ ⇒ throwDesEx(s"$json is not a JSON array of Siren links")
-      }
-      links map (_.convertTo[Link])
-    }
-    override def write(links: Links) = links.list.toJson
-  }
-
-  /**
-   * Spray-JSON format for serializing and deserializing actions.
-   */
-  implicit val actionsFormat: RootJsonFormat[Actions] = new RootJsonFormat[Actions] {
-    override def read(json: JsValue) = {
-      val actions = json match {
-        case JsArray(items) ⇒ items.toList match {
-          case head :: tail ⇒ NonEmptyList.nel(head, tail)
-          case Nil          ⇒ throwDesEx("Array of actions must not be empty")
-        }
-        case _ ⇒ throwDesEx(s"$json is not a JSON array of Siren actions")
-      }
-      actions map (_.convertTo[Action])
-    }
-    override def write(actions: Actions) = actions.list.toJson
-  }
-
-  /**
    * Spray-JSON format for serializing and deserializing Siren properties.
    */
   implicit val propertiesFormat: RootJsonFormat[Properties] = new RootJsonFormat[Properties] {
@@ -172,14 +137,11 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
       val properties = json.asJsObject.fields map {
         case (name, x) ⇒ Property(name, x.convertTo[Property.Value])
       }
-      properties.toList match {
-        case head :: tail ⇒ NonEmptyList.nel(head, tail)
-        case Nil          ⇒ throwDesEx(s"Array of properties must not be empty")
-      }
+      properties.toList
     }
     override def write(obj: Properties): JsValue = {
-      val fields = obj.list map (p ⇒ p.name -> p.value.toJson)
-      JsObject(fields)
+      val fields = obj map (p ⇒ p.name -> p.value.toJson)
+      JsObject(fields: _*)
     }
   }
 
@@ -236,23 +198,6 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
   }
 
   /**
-   * Spray-JSON format for action fields.
-   */
-  implicit val fieldsFormat: RootJsonFormat[Fields] = new RootJsonFormat[Fields] {
-    override def read(json: JsValue) = {
-      val fields = json match {
-        case JsArray(items) ⇒ items.toList match {
-          case head :: tail ⇒ NonEmptyList.nel(head, tail)
-          case Nil          ⇒ throwDesEx(s"Array of links must not be empty")
-        }
-        case _ ⇒ throwDesEx(s"$json is not a JSON array of Siren links")
-      }
-      fields map (_.convertTo[Action.Field])
-    }
-    override def write(fields: Fields) = fields.list.toJson
-  }
-
-  /**
    * Spray-JSON format for serializing and deserializing Siren actions.
    */
   implicit val actionFormat: RootJsonFormat[Action] = new RootJsonFormat[Action] {
@@ -260,21 +205,21 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
       val obj = json.asJsObject
       val name = (obj \ FieldNames.`name`).asString
       val href = (obj \ FieldNames.`href`).asString
-      val classes = (obj \? FieldNames.`class`) map (_.asStringNel)
+      val classes = (obj \? FieldNames.`class`) map (_.asStringSeq)
       val title = (obj \? FieldNames.`title`) map (_.asString)
       val method = (obj \? FieldNames.`method`) map (_.convertTo[Action.Method])
       val `type` = (obj \? FieldNames.`type`) map (_.convertTo[Action.Encoding])
-      val fields = (obj \? FieldNames.`fields`) map (_.convertTo[Fields])
+      val fields = (obj \? FieldNames.`fields`) map (_.convertTo[Seq[Action.Field]])
       Action(name, href, classes, title, method, `type`, fields)
     }
     override def write(action: Action): JsValue = {
       val name = some(FieldNames.`name` -> action.name.toJson)
-      val classes = action.classes map (FieldNames.`class` -> _.list.toJson)
+      val classes = action.classes map (FieldNames.`class` -> _.toJson)
       val title = action.title map (FieldNames.`title` -> _.toJson)
       val href = some(FieldNames.`href` -> action.href.toJson)
       val method = action.method map (FieldNames.`method` -> _.toJson)
       val `type` = action.`type` map (FieldNames.`type` -> _.toJson)
-      val fields = action.fields map (FieldNames.`fields` -> _.list.toJson)
+      val fields = action.fields map (FieldNames.`fields` -> _.toJson)
       JsObject(collectSome(name, classes, title, href, method, `type`, fields))
     }
   }
@@ -307,12 +252,12 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
     override def read(json: JsValue): Link = {
       val obj = json.asJsObject
       val href = (obj \ FieldNames.`href`).asString
-      val rels = (obj \ FieldNames.`rel`).asStringNel
+      val rels = (obj \ FieldNames.`rel`).asStringSeq
       val title = (obj \? FieldNames.`title`) map (_.asString)
       Link(rels, href, title)
     }
     override def write(link: Link): JsValue = {
-      val rels = some(FieldNames.`rel` -> link.rel.list.toJson)
+      val rels = some(FieldNames.`rel` -> link.rel.toJson)
       val href = some(FieldNames.`href` -> link.href.toJson)
       val title = link.title map (FieldNames.`title` -> _.toJson)
       JsObject(collectSome(rels, href, title))

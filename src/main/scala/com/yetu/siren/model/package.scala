@@ -24,8 +24,6 @@
 
 package com.yetu.siren
 
-import com.yetu.siren.model.Action.Fields
-
 /**
  * The model package, containing a complete model of Siren entities in terms of
  * algebraic data types).
@@ -33,9 +31,11 @@ import com.yetu.siren.model.Action.Fields
 package object model {
 
   import collection.immutable
-  import scalaz.NonEmptyList
+  import immutable.{ Seq ⇒ ImmutableSeq }
   import scalaz.syntax.equal._
   import scalaz.std.string._
+
+  type Properties = ImmutableSeq[Property]
 
   /**
    * Companion object for the property type.
@@ -74,8 +74,6 @@ package object model {
    * Companion object of the [[Action]] type.
    */
   object Action {
-
-    type Fields = NonEmptyList[Field]
 
     /**
      * A sum type that represents a method that can be specified for an action.
@@ -185,11 +183,11 @@ package object model {
   case class Action(
     name: String,
     href: String,
-    classes: Option[Classes] = None,
+    classes: Option[ImmutableSeq[String]] = None,
     title: Option[String] = None,
     method: Option[Action.Method] = None,
     `type`: Option[Action.Encoding] = None,
-    fields: Option[Fields] = None)
+    fields: Option[ImmutableSeq[Action.Field]] = None)
 
   /**
    * A navigational link that can be specified for an entity in Siren.
@@ -197,41 +195,21 @@ package object model {
    * @param href the URL of the linked resource
    * @param title an optional text describing the nature of the link
    */
-  case class Link(rel: Rels, href: String, title: Option[String] = None)
-
-  /**
-   * The list of classes that can be attached to an entity or action in Siren.
-   */
-  type Classes = NonEmptyList[String]
-  /**
-   * Properties of an entity.
-   */
-  type Properties = NonEmptyList[Property]
-  /**
-   * Actions of an entity.
-   */
-  type Actions = NonEmptyList[Action]
-  /**
-   * Links of an entity.
-   */
-  type Links = NonEmptyList[Link]
-
-  /** Relations */
-  type Rels = NonEmptyList[String]
+  case class Link(rel: ImmutableSeq[String], href: String, title: Option[String] = None)
 
   /**
    * A Siren entity.
    */
   sealed trait Entity {
     /** the optional classes of this entity */
-    def classes: Option[Classes]
+    def classes: Option[ImmutableSeq[String]]
   }
   /**
    * An embedded entity, i.e. a sub entity of a [[Entity.RootEntity]]
    */
   sealed trait EmbeddedEntity extends Entity {
     /** the relationship between the parent entity  and this sub entity */
-    def rel: Rels
+    def rel: ImmutableSeq[String]
   }
   /**
    * A fully represented entity.
@@ -240,9 +218,9 @@ package object model {
     /** the optional properties of this entity */
     def properties: Option[Properties]
     /** the optional actions specified for this entity */
-    def actions: Option[Actions]
+    def actions: Option[ImmutableSeq[Action]]
     /** the optional links specified for this entity */
-    def links: Option[Links]
+    def links: Option[ImmutableSeq[Link]]
     /** an optional descriptive text about this entity */
     def title: Option[String]
   }
@@ -252,17 +230,15 @@ package object model {
    */
   object Entity {
 
-    type Entities = immutable.Seq[EmbeddedEntity]
-
     /**
      * A root, i.e. top-level, Siren entity.
      */
     case class RootEntity(
-      classes: Option[Classes] = None,
+      classes: Option[ImmutableSeq[String]] = None,
       properties: Option[Properties] = None,
-      entities: Option[Entities] = None,
-      actions: Option[Actions] = None,
-      links: Option[Links] = None,
+      entities: Option[ImmutableSeq[EmbeddedEntity]] = None,
+      actions: Option[ImmutableSeq[Action]] = None,
+      links: Option[ImmutableSeq[Link]] = None,
       title: Option[String] = None) extends EntityRepresentation
     /**
      * A sub entity that is only an embedded link, not a a full representation of the
@@ -272,19 +248,19 @@ package object model {
      * @param classes the optional classes of this entity
      */
     case class EmbeddedLink(
-      rel: Rels,
+      rel: ImmutableSeq[String],
       href: String,
-      classes: Option[Classes] = None) extends EmbeddedEntity
+      classes: Option[ImmutableSeq[String]] = None) extends EmbeddedEntity
     /**
      * A full representation of an embedded sub entity.
      */
     case class EmbeddedRepresentation(
-      rel: Rels,
-      classes: Option[Classes] = None,
+      rel: ImmutableSeq[String],
+      classes: Option[ImmutableSeq[String]] = None,
       properties: Option[Properties] = None,
-      entities: Option[Entities] = None,
-      actions: Option[Actions] = None,
-      links: Option[Links] = None,
+      entities: Option[ImmutableSeq[EmbeddedEntity]] = None,
+      actions: Option[ImmutableSeq[Action]] = None,
+      links: Option[ImmutableSeq[Link]] = None,
       title: Option[String] = None) extends EmbeddedEntity with EntityRepresentation
   }
 
