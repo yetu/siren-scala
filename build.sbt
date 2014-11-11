@@ -21,7 +21,6 @@ resolvers += "spray" at "http://repo.spray.io/"
 resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-core" % "7.1.0",
   "io.spray" %%  "spray-json" % "1.2.6" % "provided",
   "com.typesafe.play" %% "play-json" % "2.3.4" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test"

@@ -11,8 +11,6 @@ trait PlayJsonSirenFormat {
   import play.api.libs.json._
   import play.api.libs.functional.syntax._
 
-  import scalaz.std.option._
-
   /**
    * Play-JSON format for a Siren root entity.
    */
@@ -186,12 +184,6 @@ trait PlayJsonSirenFormat {
     (JsPath \ FieldNames.`href`).format[String] and
     (JsPath \ FieldNames.`title`).formatNullable[String]
   )(Link.apply, unlift(Link.unapply))
-
-  private def jsonField[A: Writes](name: String)(value: A) = name -> Json.toJson(value)
-  private def optField[A: Writes](name: String, value: Option[A]): Option[(String, JsValue)] =
-    value map jsonField(name)
-  private def field[A: Writes](name: String, value: A) = some(name -> Json.toJson(value))
-  private def jsObject(fields: Option[(String, JsValue)]*) = JsObject(collectSome(fields: _*))
 
 }
 

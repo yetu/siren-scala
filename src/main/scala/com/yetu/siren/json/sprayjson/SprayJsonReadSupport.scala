@@ -27,7 +27,6 @@ package json
 package sprayjson
 
 import spray.json._
-import scalaz.NonEmptyList
 
 private[sprayjson] object SprayJsonReadSupport {
 
@@ -35,10 +34,9 @@ private[sprayjson] object SprayJsonReadSupport {
   val Seq = scala.collection.immutable.Seq
 
   implicit class RichJsObject(val obj: JsObject) extends AnyVal {
-    import scalaz.std.option._
     def fieldOpt(fieldName: String): Option[JsValue] = obj.getFields(fieldName).toList match {
-      case Seq(value) ⇒ some(value)
-      case _          ⇒ none
+      case Seq(value) ⇒ Some(value)
+      case _          ⇒ None
     }
     def field(fieldName: String): JsValue = obj.getFields(fieldName).toList match {
       case Seq(value) ⇒ value
@@ -60,12 +58,6 @@ private[sprayjson] object SprayJsonReadSupport {
           case x           ⇒ throwDesEx(s"$x is not a JSON string")
         }
       case x ⇒ throwDesEx(s"$x is not a JSON array")
-    }
-    def asStringNel: NonEmptyList[String] = {
-      asStringSeq match {
-        case head :: tail ⇒ NonEmptyList.nel(head, tail)
-        case Nil          ⇒ throwDesEx(s"JSON array is empty")
-      }
     }
   }
 
