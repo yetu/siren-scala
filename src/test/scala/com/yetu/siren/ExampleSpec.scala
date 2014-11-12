@@ -25,7 +25,6 @@
 package com.yetu.siren
 
 import org.scalatest.{ MustMatchers, WordSpec }
-import scalaz.syntax.std.option._
 import spray.json._
 import json.sprayjson.SirenJsonProtocol
 import model._
@@ -43,42 +42,42 @@ class ExampleSpec extends WordSpec with MustMatchers {
     new SirenRootEntityWriter[Order] {
       override def toSiren(order: Order) = {
         RootEntity(
-          classes = List("order").some,
-          properties = List(
+          classes = Some(List("order")),
+          properties = Some(List(
             Property("orderNumber", Property.NumberValue(order.orderNumber)),
             Property("itemCount", Property.NumberValue(order.itemCount)),
             Property("status", Property.StringValue(order.status))
-          ).some,
-          entities = List(
+          )),
+          entities = Some(List(
             EmbeddedLink(
-              classes = List("items", "collection").some,
+              classes = Some(List("items", "collection")),
               rel = "http://x.io/rels/order-items" :: Nil,
               href = s"$baseUri/orders/42/items"
             ),
             EmbeddedRepresentation(
-              classes = List("info", "customer").some,
+              classes = Some(List("info", "customer")),
               rel = "http://x.io/rels/customer" :: Nil,
-              properties = List(
+              properties = Some(List(
                 Property("customerId", Property.StringValue(order.customer.customerId)),
                 Property("name", Property.StringValue(order.customer.name))
-              ).some,
-              links = List(Link(
+              )),
+              links = Some(List(Link(
                 rel = "self" :: Nil,
                 href = s"$baseUri/customers/${order.customer.customerId}"
-              )).some
+              )))
             )
-          ).some,
-          actions = List(Action(
+          )),
+          actions = Some(List(Action(
             name = "add-item",
-            title = "Add Item".some,
-            method = Action.Method.POST.some,
+            title = Some("Add Item"),
+            method = Some(Action.Method.POST),
             href = s"$baseUri/orders/${order.orderNumber}/items",
-            `type` = Action.Encoding.`application/x-www-form-urlencoded`.some,
-            fields = List(
+            `type` = Some(Action.Encoding.`application/x-www-form-urlencoded`),
+            fields = Some(List(
               Action.Field(
                 name = "orderNumber",
                 `type` = Action.Field.Type.`hidden`,
-                value = order.orderNumber.toString.some
+                value = Some(order.orderNumber.toString)
               ),
               Action.Field(
                 name = "productCode",
@@ -88,9 +87,9 @@ class ExampleSpec extends WordSpec with MustMatchers {
                 name = "quantity",
                 `type` = Action.Field.Type.`number`
               )
-            ).some
-          )).some,
-          links = List(
+            ))
+          ))),
+          links = Some(List(
             Link(
               rel = "self" :: Nil,
               href = s"$baseUri/orders/${order.orderNumber}"
@@ -103,7 +102,7 @@ class ExampleSpec extends WordSpec with MustMatchers {
               rel = "next" :: Nil,
               href = s"$baseUri/orders/${order.orderNumber + 1}"
             )
-          ).some
+          ))
         )
       }
     }

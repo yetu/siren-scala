@@ -3,9 +3,6 @@ package com.yetu.siren.json
 import com.yetu.siren.model._
 import org.scalatest.WordSpec
 
-import scalaz.NonEmptyList
-import scalaz.std.option._
-
 trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   protected def parseJson(jsonString: String): JsonBaseType
@@ -40,7 +37,7 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
   protected lazy val embeddedLink = Entity.EmbeddedLink(
     rel = List("http://x.io/rels/order-items"),
     href = "http://api.x.io/orders/42/items",
-    classes = some(List("items", "collection"))
+    classes = Some(List("items", "collection"))
   )
 
   protected lazy val embeddedRepresentationJsonString =
@@ -103,32 +100,32 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """.stripMargin
 
   protected lazy val embeddedRepresentation = Entity.EmbeddedRepresentation(
-    classes = some(List("info", "customer")),
+    classes = Some(List("info", "customer")),
     rel = List("http://x.io/rels/customer"),
-    properties = some(List(
+    properties = Some(List(
       Property("customerId", Property.StringValue("pj123")),
       Property("name", Property.StringValue("Peter Joseph")))),
-    entities = some(List(
+    entities = Some(List(
       Entity.EmbeddedLink(
-        classes = some("company" :: Nil),
+        classes = Some("company" :: Nil),
         rel = "http://x.io/rels/company" :: Nil,
         href = "http://api.x.io/customer/pj123/company"
       )
     )),
-    actions = some(List(
+    actions = Some(List(
       Action(
         name = "set-name",
         href = "http://api.x.io/customer/pj123/name",
-        title = some("Set Customer's Name"),
-        method = some(Action.Method.POST),
-        `type` = some(Action.Encoding.`application/json`),
-        fields = some(List(
+        title = Some("Set Customer's Name"),
+        method = Some(Action.Method.POST),
+        `type` = Some(Action.Encoding.`application/json`),
+        fields = Some(List(
           Action.Field(name = "name", `type` = Action.Field.Type.`text`)
         ))
       )
     )),
-    links = some(List(Link(href = "http://api.x.io/customers/pj123", rel = "self" :: Nil))),
-    title = some("Customer information")
+    links = Some(List(Link(href = "http://api.x.io/customers/pj123", rel = "self" :: Nil))),
+    title = Some("Customer information")
   )
 
   protected lazy val props: Properties = List(
@@ -156,11 +153,11 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
   protected lazy val action = Action(
     name = "add-item",
     href = "http://api.x.io/orders/42/items",
-    title = some("Add Item"),
-    method = some(Action.Method.POST),
-    `type` = some(Action.Encoding.`application/x-www-form-urlencoded`),
-    fields = some(List(
-      Action.Field(name = "orderNumber", `type` = Action.Field.Type.`hidden`, value = some("42")),
+    title = Some("Add Item"),
+    method = Some(Action.Method.POST),
+    `type` = Some(Action.Encoding.`application/x-www-form-urlencoded`),
+    fields = Some(List(
+      Action.Field(name = "orderNumber", `type` = Action.Field.Type.`hidden`, value = Some("42")),
       Action.Field(name = "productCode", `type` = Action.Field.Type.`text`),
       Action.Field(name = "quantity", `type` = Action.Field.Type.`number`)))
   )
@@ -213,12 +210,12 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     """.stripMargin
 
   protected val entity = Entity.RootEntity(
-    classes = some("order" :: Nil),
-    properties = some(properties),
-    entities = some(List(embeddedLink, embeddedRepresentation)),
-    actions = some(action :: Nil),
-    links = some(links),
-    title = some("Order number 42")
+    classes = Some("order" :: Nil),
+    properties = Some(properties),
+    entities = Some(List(embeddedLink, embeddedRepresentation)),
+    actions = Some(action :: Nil),
+    links = Some(links),
+    title = Some("Order number 42")
   )
 
   protected lazy val entityJsonString =

@@ -27,7 +27,6 @@ package json
 package sprayjson
 
 import org.scalatest.{ WordSpec, MustMatchers }
-import scalaz.NonEmptyList
 import spray.json._
 
 class SprayJsonReadSupportSpec extends WordSpec with MustMatchers {
@@ -51,10 +50,6 @@ class SprayJsonReadSupportSpec extends WordSpec with MustMatchers {
       val json = JsObject("foo" -> JsArray(JsString("bar"), JsString("baz")))
       (json \ "foo").asStringSeq mustEqual Seq("bar", "baz")
     }
-    "read an existing, non-empty JSON array as NonEmptyList" in {
-      val json = JsObject("foo" -> JsArray(JsString("bar"), JsString("baz")))
-      (json \ "foo").asStringNel mustEqual NonEmptyList("bar", "baz")
-    }
     "fail if existing JSON field is read as string but not a string" in {
       val json = JsObject("foo" -> JsNumber(23))
       intercept[DeserializationException] {
@@ -65,18 +60,6 @@ class SprayJsonReadSupportSpec extends WordSpec with MustMatchers {
       val json = JsObject("foo" -> JsArray(JsString("bar"), JsNumber(5)))
       intercept[DeserializationException] {
         (json \ "foo").asStringSeq
-      }
-    }
-    "fail if existing JSON field is read as non-empty list of strings, but has wrong types in it" in {
-      val json = JsObject("foo" -> JsArray(JsNumber(5)))
-      intercept[DeserializationException] {
-        (json \ "foo").asStringNel
-      }
-    }
-    "fail if existing JSON field is read as non-empty list, but JSON array is empty" in {
-      val json = JsObject("foo" -> JsArray())
-      intercept[DeserializationException] {
-        (json \ "foo").asStringNel
       }
     }
   }

@@ -32,8 +32,6 @@ package object model {
 
   import collection.immutable
   import immutable.{ Seq ⇒ ImmutableSeq }
-  import scalaz.syntax.equal._
-  import scalaz.std.string._
 
   type Properties = ImmutableSeq[Property]
 
@@ -278,7 +276,7 @@ package object model {
      * enumeration value with that name exists.
      * @param name the name for which a corresponding enumeration value is to be returned
      */
-    def forName(name: String): Option[A] = values find (_.name === name)
+    def forName(name: String): Option[A] = values find (_.name == name)
 
     def unapply(name: String): Option[A] = forName(name)
   }
