@@ -20,7 +20,7 @@ In order to use _siren-scala_ library you must add resolver to _sonatype_ server
     
 ##Library dependency
 
-    libraryDependencies += "com.yetu" %% "siren-scala" % "0.3.0"
+    libraryDependencies += "com.yetu" %% "siren-scala" % "0.4.0"
 
 #Usage
 
