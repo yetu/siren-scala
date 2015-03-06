@@ -10,9 +10,9 @@ name := "siren-scala"
 
 organization := "com.yetu"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.6"
 
-crossScalaVersions := Seq("2.11.2", "2.10.4")
+crossScalaVersions := Seq("2.11.6", "2.10.5")
 
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation")
 
@@ -21,9 +21,9 @@ resolvers += "spray" at "http://repo.spray.io/"
 resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "io.spray" %%  "spray-json" % "1.2.6" % "provided",
-  "com.typesafe.play" %% "play-json" % "2.3.4" % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "io.spray" %%  "spray-json" % "1.3.1" % "provided",
+  "com.typesafe.play" %% "play-json" % "2.3.8" % "provided",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 scalariformSettings ++ Seq(
@@ -35,15 +35,13 @@ scalariformSettings ++ Seq(
       .setPreference(RewriteArrowSymbols, true)
 )
 
-instrumentSettings
-
 CoverallsPlugin.coverallsSettings
 
 coverallsTokenFile := ".coveralls.token"
 
-ScoverageKeys.minimumCoverage := 80
+ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 80
 
-ScoverageKeys.failOnMinimumCoverage := true
+ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 
 publishMavenStyle := true
 
