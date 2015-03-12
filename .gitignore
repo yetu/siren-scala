@@ -12,5 +12,6 @@ project/plugins/project/
 *.iws
 .idea/
 .idea_modules/
+atlassian-ide-plugin.xml
 # OS X
 .DS_Store

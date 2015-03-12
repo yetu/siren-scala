@@ -40,7 +40,7 @@ class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with S
       props.toJson mustEqual propsJson
     }
     "deserialize Siren properties" in {
-      propsJson.convertTo[Properties] mustEqual props
+      propsJson.convertTo[Properties] must contain theSameElementsAs props
     }
     "serialize Siren classes" in {
       classes.toJson mustEqual classesJson
