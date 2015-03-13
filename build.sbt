@@ -1,10 +1,9 @@
+import scoverage.ScoverageSbtPlugin
+
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import com.typesafe.sbt.SbtScalariform.scalariformSettings
-import xerial.sbt.Sonatype.SonatypeKeys._
-import CoverallsPlugin.CoverallsKeys._
-
-sonatypeSettings
+import bintray.Keys._
 
 name := "siren-scala"
 
@@ -37,46 +36,22 @@ scalariformSettings ++ Seq(
 
 CoverallsPlugin.coverallsSettings
 
-coverallsTokenFile := ".coveralls.token"
-
 ScoverageSbtPlugin.ScoverageKeys.coverageMinimum := 80
 
 ScoverageSbtPlugin.ScoverageKeys.coverageFailOnMinimum := true
 
+// settings for bintray publishing
+
+bintrayPublishSettings
+
+repository in bintray := "maven"
+
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+packageLabels in bintray := Seq("siren-scala", "yetu")
+
+bintrayOrganization in bintray := Some("yetu")
+
 publishMavenStyle := true
 
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
-
 publishArtifact in Test := false
-
-pomExtra := (
-  <url>https://github.com/yetu/siren-scala</url>
-    <licenses>
-      <license>
-        <name>MIT</name>
-        <url>http://www.opensource.org/licenses/MIT</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
-    <scm>
-      <url>git@github.com:yetu/siren-scala.git</url>
-      <connection>scm:git:git@github.com:yetu/siren-scala.git</connection>
-    </scm>
-    <developers>
-      <developer>
-        <id>zmeda</id>
-        <name>Boris Malenšek</name>
-        <url>https://github.com/zmeda</url>
-      </developer>
-      <developer>
-        <id>dwestheide</id>
-        <name>Daniel Westheide</name>
-        <url>http://danielwestheide.com/</url>
-      </developer>
-    </developers>)
