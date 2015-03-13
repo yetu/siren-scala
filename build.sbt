@@ -22,7 +22,7 @@ resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.3.1" % "provided",
   "com.typesafe.play" %% "play-json" % "2.3.8" % "provided",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 scalariformSettings ++ Seq(
