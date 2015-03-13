@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/yetu/siren-scala.svg?branch=master)](https://travis-ci.org/yetu/siren-scala)
 [![Coverage Status](https://img.shields.io/coveralls/yetu/siren-scala.svg)](https://coveralls.io/r/yetu/siren-scala?branch=master)
+[ ![Download](https://api.bintray.com/packages/yetu/maven/siren-scala/images/download.svg) ](https://bintray.com/yetu/maven/siren-scala/_latestVersion)
 
 A Scala library for producing Siren entities from your domain model objects and serializing them to 
 `application/vnd.siren+json`. See the [Siren Spec](http://sirenspec.org)
@@ -12,15 +13,15 @@ Currently the library supports Scala 2.10 and 2.11 versions.
 
 #Setup
 
-In order to use _siren-scala_ library you must add resolver to _sonatype_ server and library dependency.
+In order to use _siren-scala_ library you must add resolver to _bintray_ repository and library dependency.
 
 ##Resolvers
 
-    resolvers += "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+    resolvers += "yetu Bintray Repo" at "http://dl.bintray.com/yetu/maven/"
     
 ##Library dependency
 
-    libraryDependencies += "com.yetu" %% "siren-scala" % "0.4.0"
+    libraryDependencies += "com.yetu" %% "siren-scala" % "0.5.0"
 
 #Usage
 
