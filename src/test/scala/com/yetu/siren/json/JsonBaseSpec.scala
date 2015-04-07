@@ -9,6 +9,12 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   protected lazy val propsJson = parseJson(propsJsonString)
 
+  protected lazy val propsWithArrayJson = parseJson(propsJsonStringWithArray)
+
+  protected lazy val propsWithComplexArrayJson = parseJson(propsJsonStringWithComplexArray)
+
+  protected lazy val propsWithJsonObjectJson = parseJson(propsJsonStringWithNestedJsonObject)
+
   protected lazy val invalidPropsJson = parseJson(invalidPropsJsonString)
 
   protected lazy val classesJson = parseJson(classesJsonString)
@@ -135,6 +141,49 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     Property("foo", Property.BooleanValue(value = false)),
     Property("bar", Property.NullValue))
 
+  protected lazy val propsFromArray: Properties = List(
+    Property("temperature", Property.NumberValue(42)),
+    Property("mode", Property.NumberValue(3)),
+    Property("capabilities", Property.JsArrayValue(Seq(
+      Property.StringValue("dimmable"),
+      Property.StringValue("switchable"))
+    )),
+    Property("status", Property.StringValue("pending")),
+    Property("isOn", Property.BooleanValue(value = true)))
+
+  protected lazy val propsFromComplexArray: Properties = List(
+    Property("temperature", Property.NumberValue(42)),
+    Property("mode", Property.NumberValue(3)),
+    Property("colors", Property.JsArrayValue(Seq(
+      Property.JsObjectValue(Seq(
+        "name" -> Property.StringValue("superred"),
+        "hue" -> Property.NumberValue(42),
+        "saturation" -> Property.NumberValue(56),
+        "brightness" -> Property.NumberValue(10)
+      )),
+      Property.JsObjectValue(Seq(
+        "name" -> Property.StringValue("yetugreen"),
+        "hue" -> Property.NumberValue(45),
+        "saturation" -> Property.NumberValue(23),
+        "brightness" -> Property.NumberValue(5)
+      ))
+    ))),
+    Property("status", Property.StringValue("pending")),
+    Property("isOn", Property.BooleanValue(value = true)))
+
+
+  protected lazy val propsWithJsonObject: Properties = List(
+    Property("temperature", Property.NumberValue(42)),
+    Property("mode", Property.NumberValue(3)),
+    Property("color",  Property.JsObjectValue(Seq(
+      "name" -> Property.StringValue("superred"),
+      "hue" -> Property.NumberValue(42),
+      "saturation" -> Property.NumberValue(56),
+      "brightness" -> Property.NumberValue(10)
+    ))),
+    Property("status", Property.StringValue("pending")),
+    Property("isOn", Property.BooleanValue(value = true)))
+
   protected val properties = List(
     Property("orderNumber", Property.NumberValue(42)),
     Property("itemCount", Property.NumberValue(3)),
@@ -172,6 +221,56 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
         "bar": null
       }
     """.stripMargin
+
+  protected lazy val propsJsonStringWithArray =
+    """
+      {
+        "temperature": 42,
+        "mode": 3,
+        "capabilities" : ["dimmable", "switchable"],
+        "status": "pending",
+        "isOn": true
+      }
+    """.stripMargin
+
+  protected lazy val propsJsonStringWithComplexArray =
+    """
+      {
+        "temperature": 42,
+        "mode": 3,
+        "colors" : [{
+          "name" : "superred",
+          "hue": 42,
+          "saturation" : 56,
+          "brightness" : 10
+        },
+        {
+          "name" : "yetugreen",
+          "hue": 45,
+          "saturation" : 23,
+          "brightness" : 5
+        }],
+        "status": "pending",
+        "isOn": true
+      }
+    """.stripMargin
+
+  protected lazy val propsJsonStringWithNestedJsonObject =
+    """
+      {
+        "temperature": 42,
+        "mode": 3,
+        "color": {
+          "name" : "superred",
+          "hue": 42,
+          "saturation" : 56,
+          "brightness" : 10
+        },
+        "status": "pending",
+        "isOn": true
+      }
+    """.stripMargin
+
 
   protected lazy val invalidPropsJsonString =
     """

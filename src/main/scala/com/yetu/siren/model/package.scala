@@ -31,7 +31,7 @@ package com.yetu.siren
 package object model {
 
   import collection.immutable
-  import immutable.{ Seq ⇒ ImmutableSeq }
+  import immutable.{Seq => ImmutableSeq}
 
   type Properties = ImmutableSeq[Property]
 
@@ -56,6 +56,11 @@ package object model {
      * @param value the boolean value
      */
     case class BooleanValue(value: Boolean) extends Value
+
+    case class JsObjectValue(fields : Seq[(String, Value)]) extends Value
+
+    case class JsArrayValue(value: Seq[Value]) extends Value
+
     /**
      * The property value that represents a non-existing value.
      */
