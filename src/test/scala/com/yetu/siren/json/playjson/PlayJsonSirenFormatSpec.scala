@@ -63,6 +63,18 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
       assert(Json.fromJson[Properties](propsWithJsonObjectJson) === JsSuccess(propsWithJsonObject))
     }
 
+    "serialize Siren properties to json Array" in {
+      assert(Json.toJson(propsFromArray) === propsWithArrayJson)
+    }
+
+    "serialize Siren properties to complex json Array" in {
+      assert(Json.toJson(propsFromComplexArray) === propsWithComplexArrayJson)
+    }
+
+    "serialize Siren properties to json object" in {
+      assert(Json.toJson(propsWithJsonObject) === propsWithJsonObjectJson)
+    }
+
     "deserialize Siren classes" in {
       assert(Json.fromJson[ImmutableSeq[String]](classesJson) === JsSuccess(classes))
     }
