@@ -31,6 +31,34 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
       assert(Json.toJson(props) === propsJson)
     }
 
+    "serialize Siren properties to json Array" in {
+      assert(Json.toJson(propsWithArray) === propsWithArrayJson)
+    }
+
+    "serialize Siren properties to complex json Array" in {
+      assert(Json.toJson(propsWithComplexArray) === propsWithComplexArrayJson)
+    }
+
+    "serialize Siren properties to json object" in {
+      assert(Json.toJson(propsWithJsonObject) === propsWithJsonObjectJson)
+    }
+
+    "deserialize Siren properties" in {
+      assert(Json.fromJson[Properties](propsJson) === JsSuccess(props))
+    }
+
+    "deserialize Siren properties with json Array" in {
+      assert(Json.fromJson[Properties](propsWithArrayJson) === JsSuccess(propsWithArray))
+    }
+
+    "deserialize Siren properties with complex json Array" in {
+      assert(Json.fromJson[Properties](propsWithComplexArrayJson) === JsSuccess(propsWithComplexArray))
+    }
+
+    "deserialize Siren properties with json object" in {
+      assert(Json.fromJson[Properties](propsWithJsonObjectJson) === JsSuccess(propsWithJsonObject))
+    }
+
     "serialize Siren classes" in {
       assert(Json.toJson(classes) === classesJson)
     }
@@ -45,34 +73,6 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
 
     "serialize a complete Siren entity with embedded linked and fully represented sub-entities correctly" in {
       assert(Json.toJson(entity) === entityJson)
-    }
-
-    "deserialize Siren properties" in {
-      assert(Json.fromJson[Properties](propsJson) === JsSuccess(props))
-    }
-
-    "deserialize Siren properties with json Array" in {
-      assert(Json.fromJson[Properties](propsWithArrayJson) === JsSuccess(propsFromArray))
-    }
-
-    "deserialize Siren properties with complex json Array" in {
-      assert(Json.fromJson[Properties](propsWithComplexArrayJson) === JsSuccess(propsFromComplexArray))
-    }
-
-    "deserialize Siren properties with json object" in {
-      assert(Json.fromJson[Properties](propsWithJsonObjectJson) === JsSuccess(propsWithJsonObject))
-    }
-
-    "serialize Siren properties to json Array" in {
-      assert(Json.toJson(propsFromArray) === propsWithArrayJson)
-    }
-
-    "serialize Siren properties to complex json Array" in {
-      assert(Json.toJson(propsFromComplexArray) === propsWithComplexArrayJson)
-    }
-
-    "serialize Siren properties to json object" in {
-      assert(Json.toJson(propsWithJsonObject) === propsWithJsonObjectJson)
     }
 
     "deserialize Siren classes" in {
