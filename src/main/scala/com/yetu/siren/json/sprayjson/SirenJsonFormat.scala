@@ -26,6 +26,7 @@ package com.yetu.siren
 package json
 package sprayjson
 
+import play.api.libs.json.JsSuccess
 import spray.json._
 import com.yetu.siren.model.Action._
 import com.yetu.siren.model.Action.Field.Type
@@ -152,15 +153,26 @@ trait SirenJsonFormat { self: DefaultJsonProtocol ⇒
       case JsString(s)  ⇒ Property.StringValue(s)
       case JsNumber(n)  ⇒ Property.NumberValue(n)
       case JsBoolean(b) ⇒ Property.BooleanValue(b)
-      case JsNull       ⇒ Property.NullValue
-      case x            ⇒ throwDesEx(s"$x is not a valid property value")
+      case JsObject(obj) ⇒
+        val propsObjValue: Map[String, Property.Value] = obj.map(seq ⇒ {
+          val (key, jsValue) = seq
+          key -> read(jsValue)
+        })
+        Property.JsObjectValue(propsObjValue.toSeq)
+      case JsArray(arr) ⇒
+        val propsArrayValue: Seq[Value] = arr.map(jsValue ⇒ read(jsValue))
+        Property.JsArrayValue(propsArrayValue)
+      case JsNull ⇒ Property.NullValue
+      case x      ⇒ throwDesEx(s"$x is not a valid property value")
     }
     override def write(obj: Value): JsValue =
       obj match {
-        case Property.StringValue(s)  ⇒ s.toJson
-        case Property.NumberValue(n)  ⇒ n.toJson
-        case Property.BooleanValue(b) ⇒ b.toJson
-        case Property.NullValue       ⇒ JsNull
+        case Property.StringValue(s)   ⇒ s.toJson
+        case Property.NumberValue(n)   ⇒ n.toJson
+        case Property.BooleanValue(b)  ⇒ b.toJson
+        case Property.JsObjectValue(o) ⇒ o.toMap.toJson
+        case Property.JsArrayValue(a)  ⇒ a.toJson
+        case Property.NullValue        ⇒ JsNull
       }
   }
 

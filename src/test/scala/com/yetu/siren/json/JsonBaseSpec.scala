@@ -139,7 +139,7 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     Property("foo", Property.BooleanValue(value = false)),
     Property("bar", Property.NullValue))
 
-  protected lazy val propsFromArray: Properties = List(
+  protected lazy val propsWithArray: Properties = List(
     Property("temperature", Property.NumberValue(42)),
     Property("mode", Property.NumberValue(3)),
     Property("capabilities", Property.JsArrayValue(Seq(
@@ -149,7 +149,7 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     Property("status", Property.StringValue("pending")),
     Property("isOn", Property.BooleanValue(value = true)))
 
-  protected lazy val propsFromComplexArray: Properties = List(
+  protected lazy val propsWithComplexArray: Properties = List(
     Property("temperature", Property.NumberValue(42)),
     Property("mode", Property.NumberValue(3)),
     Property("colors", Property.JsArrayValue(Seq(
