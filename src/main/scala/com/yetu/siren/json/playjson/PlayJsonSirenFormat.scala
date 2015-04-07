@@ -1,6 +1,8 @@
 package com.yetu.siren.json
 package playjson
 
+import com.yetu.siren.model.Property.Value
+
 trait PlayJsonSirenFormat {
 
   import com.yetu.siren.model._
@@ -8,26 +10,26 @@ trait PlayJsonSirenFormat {
   import play.api.libs.functional.syntax._
   import play.api.libs.json._
 
-  import collection.immutable.{Seq => ImmutableSeq}
+  import collection.immutable.{ Seq ⇒ ImmutableSeq }
 
   /**
    * Play-JSON format for a Siren root entity.
    */
   implicit lazy val rootEntityFormat: Format[Entity.RootEntity] = (
     (JsPath \ FieldNames.`class`).formatNullable[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`properties`).formatNullable[Properties] and
-      (JsPath \ FieldNames.`entities`).formatNullable[ImmutableSeq[EmbeddedEntity]] and
-      (JsPath \ FieldNames.`actions`).formatNullable[ImmutableSeq[Action]] and
-      (JsPath \ FieldNames.`links`).formatNullable[ImmutableSeq[Link]] and
-      (JsPath \ FieldNames.`title`).formatNullable[String]
-    )(Entity.RootEntity.apply, unlift(Entity.RootEntity.unapply))
+    (JsPath \ FieldNames.`properties`).formatNullable[Properties] and
+    (JsPath \ FieldNames.`entities`).formatNullable[ImmutableSeq[EmbeddedEntity]] and
+    (JsPath \ FieldNames.`actions`).formatNullable[ImmutableSeq[Action]] and
+    (JsPath \ FieldNames.`links`).formatNullable[ImmutableSeq[Link]] and
+    (JsPath \ FieldNames.`title`).formatNullable[String]
+  )(Entity.RootEntity.apply, unlift(Entity.RootEntity.unapply))
 
   /**
    * Play-JSON writer for a Siren embedded entity.
    */
   implicit lazy val embeddedEntityFormat: Format[EmbeddedEntity] = new Format[EmbeddedEntity] {
     override def writes(entity: EmbeddedEntity): JsValue = entity match {
-      case e: Entity.EmbeddedLink ⇒ embeddedLinkWriter writes e
+      case e: Entity.EmbeddedLink           ⇒ embeddedLinkWriter writes e
       case e: Entity.EmbeddedRepresentation ⇒ embeddedRepresentationWriter writes e
     }
 
@@ -43,78 +45,77 @@ trait PlayJsonSirenFormat {
    */
   implicit lazy val embeddedLinkWriter: Writes[Entity.EmbeddedLink] = (
     (JsPath \ FieldNames.`rel`).write[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`href`).write[String] and
-      (JsPath \ FieldNames.`class`).writeNullable[ImmutableSeq[String]]
-    )(unlift(Entity.EmbeddedLink.unapply))
+    (JsPath \ FieldNames.`href`).write[String] and
+    (JsPath \ FieldNames.`class`).writeNullable[ImmutableSeq[String]]
+  )(unlift(Entity.EmbeddedLink.unapply))
   /**
    * Play-JSON reads for a Siren embedded link.
    */
   implicit lazy val embeddedLinkReads: Reads[Entity.EmbeddedLink] = (
     (JsPath \ FieldNames.`rel`).read[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`href`).read[String] and
-      (JsPath \ FieldNames.`class`).readNullable[ImmutableSeq[String]]
-    )(Entity.EmbeddedLink.apply _)
+    (JsPath \ FieldNames.`href`).read[String] and
+    (JsPath \ FieldNames.`class`).readNullable[ImmutableSeq[String]]
+  )(Entity.EmbeddedLink.apply _)
 
   /**
    * Play-JSON writer for a Siren embedded representation.
    */
   implicit lazy val embeddedRepresentationWriter: Writes[Entity.EmbeddedRepresentation] = (
     (JsPath \ FieldNames.`rel`).write[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`class`).writeNullable[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`properties`).writeNullable[Properties] and
-      (JsPath \ FieldNames.`entities`).writeNullable[ImmutableSeq[EmbeddedEntity]] and
-      (JsPath \ FieldNames.`actions`).writeNullable[ImmutableSeq[Action]] and
-      (JsPath \ FieldNames.`links`).writeNullable[ImmutableSeq[Link]] and
-      (JsPath \ FieldNames.`title`).writeNullable[String]
-    )(unlift(EmbeddedRepresentation.unapply))
+    (JsPath \ FieldNames.`class`).writeNullable[ImmutableSeq[String]] and
+    (JsPath \ FieldNames.`properties`).writeNullable[Properties] and
+    (JsPath \ FieldNames.`entities`).writeNullable[ImmutableSeq[EmbeddedEntity]] and
+    (JsPath \ FieldNames.`actions`).writeNullable[ImmutableSeq[Action]] and
+    (JsPath \ FieldNames.`links`).writeNullable[ImmutableSeq[Link]] and
+    (JsPath \ FieldNames.`title`).writeNullable[String]
+  )(unlift(EmbeddedRepresentation.unapply))
 
   /**
    * Play-JSON reads for a Siren embedded representation.
    */
   implicit lazy val embeddedRepresentationReads: Reads[Entity.EmbeddedRepresentation] = (
     (JsPath \ FieldNames.`rel`).read[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`class`).readNullable[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`properties`).readNullable[Properties] and
-      (JsPath \ FieldNames.`entities`).readNullable[ImmutableSeq[EmbeddedEntity]] and
-      (JsPath \ FieldNames.`actions`).readNullable[ImmutableSeq[Action]] and
-      (JsPath \ FieldNames.`links`).readNullable[ImmutableSeq[Link]] and
-      (JsPath \ FieldNames.`title`).readNullable[String]
-    )(EmbeddedRepresentation.apply _)
+    (JsPath \ FieldNames.`class`).readNullable[ImmutableSeq[String]] and
+    (JsPath \ FieldNames.`properties`).readNullable[Properties] and
+    (JsPath \ FieldNames.`entities`).readNullable[ImmutableSeq[EmbeddedEntity]] and
+    (JsPath \ FieldNames.`actions`).readNullable[ImmutableSeq[Action]] and
+    (JsPath \ FieldNames.`links`).readNullable[ImmutableSeq[Link]] and
+    (JsPath \ FieldNames.`title`).readNullable[String]
+  )(EmbeddedRepresentation.apply _)
 
   /**
    * Play-JSON writer for a Siren property value.
    */
   implicit val propertyValueFormat: Format[Property.Value] = new Format[Property.Value] {
     override def writes(value: Property.Value): JsValue = value match {
-      case Property.StringValue(s) ⇒ JsString(s)
-      case Property.NumberValue(n) ⇒ JsNumber(n)
+      case Property.StringValue(s)  ⇒ JsString(s)
+      case Property.NumberValue(n)  ⇒ JsNumber(n)
       case Property.BooleanValue(b) ⇒ JsBoolean(b)
-      case Property.JsObjectValue(o) => JsObject(o.map {
-        case (k, v) => (k, writes(v))
+      case Property.JsObjectValue(o) ⇒ JsObject(o.map {
+        case (k, v) ⇒ (k, writes(v))
       })
-      case Property.JsArrayValue(a) => JsArray(a.map(v => writes(v)))
-      case Property.NullValue ⇒ JsNull
+      case Property.JsArrayValue(a) ⇒ JsArray(a.map(v ⇒ writes(v)))
+      case Property.NullValue       ⇒ JsNull
     }
 
-
     override def reads(json: JsValue): JsResult[Property.Value] = json match {
-      case JsString(s) ⇒ JsSuccess(Property.StringValue(s))
-      case JsNumber(n) ⇒ JsSuccess(Property.NumberValue(n))
+      case JsString(s)  ⇒ JsSuccess(Property.StringValue(s))
+      case JsNumber(n)  ⇒ JsSuccess(Property.NumberValue(n))
       case JsBoolean(b) ⇒ JsSuccess(Property.BooleanValue(b))
-      case JsObject(o) ⇒ JsSuccess(Property.JsObjectValue(o.map(seq => {
-        val (key: String, jsvalue: JsValue) = seq
-        val readered = reads(jsvalue).getOrElse(Property.NullValue)
-        (key, readered)
-      })))
-      case JsArray(a) => JsSuccess(
-        Property.JsArrayValue({
-          a.map(jsValue => {
-             reads(jsValue)
-              .getOrElse(Property.NullValue)
-          })
-        }))
+      case JsObject(obj) ⇒
+        val propsObjValue: Seq[(String, Value)] = obj.map(seq ⇒ {
+          val (key, jsValue) = seq
+          val read = reads(jsValue).getOrElse(Property.NullValue)
+          (key, read)
+        })
+        JsSuccess(Property.JsObjectValue(propsObjValue))
+      case JsArray(arr) ⇒
+        val propsArrayValue: Seq[Value] = arr.map(jsValue ⇒ {
+          reads(jsValue).getOrElse(Property.NullValue)
+        })
+        JsSuccess(Property.JsArrayValue(propsArrayValue))
       case JsNull ⇒ JsSuccess(Property.NullValue)
-      case _ ⇒ JsError("error.expected.sirenpropertyvalue")
+      case _      ⇒ JsError("error.expected.sirenpropertyvalue")
     }
   }
 
@@ -180,32 +181,32 @@ trait PlayJsonSirenFormat {
    */
   implicit val fieldFormat: Format[Action.Field] = (
     (JsPath \ FieldNames.`name`).format[String] and
-      (JsPath \ FieldNames.`type`).format[Action.Field.Type] and
-      (JsPath \ FieldNames.`value`).formatNullable[String] and
-      (JsPath \ FieldNames.`title`).formatNullable[String]
-    )(Action.Field.apply, unlift(Action.Field.unapply))
+    (JsPath \ FieldNames.`type`).format[Action.Field.Type] and
+    (JsPath \ FieldNames.`value`).formatNullable[String] and
+    (JsPath \ FieldNames.`title`).formatNullable[String]
+  )(Action.Field.apply, unlift(Action.Field.unapply))
 
   /**
    * Play-JSON format for a Siren action.
    */
   implicit val actionFormat: Format[Action] = (
     (JsPath \ FieldNames.`name`).format[String] and
-      (JsPath \ FieldNames.`href`).format[String] and
-      (JsPath \ FieldNames.`class`).formatNullable[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`title`).formatNullable[String] and
-      (JsPath \ FieldNames.`method`).formatNullable[Action.Method] and
-      (JsPath \ FieldNames.`type`).formatNullable[Action.Encoding] and
-      (JsPath \ FieldNames.`fields`).formatNullable[ImmutableSeq[Action.Field]]
-    )(Action.apply, unlift(Action.unapply))
+    (JsPath \ FieldNames.`href`).format[String] and
+    (JsPath \ FieldNames.`class`).formatNullable[ImmutableSeq[String]] and
+    (JsPath \ FieldNames.`title`).formatNullable[String] and
+    (JsPath \ FieldNames.`method`).formatNullable[Action.Method] and
+    (JsPath \ FieldNames.`type`).formatNullable[Action.Encoding] and
+    (JsPath \ FieldNames.`fields`).formatNullable[ImmutableSeq[Action.Field]]
+  )(Action.apply, unlift(Action.unapply))
 
   /**
    * Play-JSON format for a Siren link.
    */
   implicit val linkFormat: Format[Link] = (
     (JsPath \ FieldNames.`rel`).format[ImmutableSeq[String]] and
-      (JsPath \ FieldNames.`href`).format[String] and
-      (JsPath \ FieldNames.`title`).formatNullable[String]
-    )(Link.apply, unlift(Link.unapply))
+    (JsPath \ FieldNames.`href`).format[String] and
+    (JsPath \ FieldNames.`title`).formatNullable[String]
+  )(Link.apply, unlift(Link.unapply))
 
 }
 

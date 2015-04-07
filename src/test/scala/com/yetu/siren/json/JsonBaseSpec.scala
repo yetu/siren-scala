@@ -15,8 +15,6 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
 
   protected lazy val propsWithJsonObjectJson = parseJson(propsJsonStringWithNestedJsonObject)
 
-  protected lazy val invalidPropsJson = parseJson(invalidPropsJsonString)
-
   protected lazy val classesJson = parseJson(classesJsonString)
 
   protected lazy val embeddedLinkJson = parseJson(embeddedLinkJsonString)
@@ -171,11 +169,10 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
     Property("status", Property.StringValue("pending")),
     Property("isOn", Property.BooleanValue(value = true)))
 
-
   protected lazy val propsWithJsonObject: Properties = List(
     Property("temperature", Property.NumberValue(42)),
     Property("mode", Property.NumberValue(3)),
-    Property("color",  Property.JsObjectValue(Seq(
+    Property("color", Property.JsObjectValue(Seq(
       "name" -> Property.StringValue("superred"),
       "hue" -> Property.NumberValue(42),
       "saturation" -> Property.NumberValue(56),
@@ -268,18 +265,6 @@ trait JsonBaseSpec[JsonBaseType] extends WordSpec {
         },
         "status": "pending",
         "isOn": true
-      }
-    """.stripMargin
-
-
-  protected lazy val invalidPropsJsonString =
-    """
-      {
-        "orderNumber": 42,
-        "itemCount": [],
-        "status": "pending",
-        "foo": {},
-        "bar": null
       }
     """.stripMargin
 

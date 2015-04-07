@@ -31,7 +31,7 @@ package com.yetu.siren
 package object model {
 
   import collection.immutable
-  import immutable.{Seq => ImmutableSeq}
+  import immutable.{ Seq ⇒ ImmutableSeq }
 
   type Properties = ImmutableSeq[Property]
 
@@ -56,9 +56,15 @@ package object model {
      * @param value the boolean value
      */
     case class BooleanValue(value: Boolean) extends Value
-
-    case class JsObjectValue(fields : Seq[(String, Value)]) extends Value
-
+    /**
+     * A property value which has a type JSON object
+     * @param value Sequence of key(String) - value(siren property value) pairs
+     */
+    case class JsObjectValue(value: Seq[(String, Value)]) extends Value
+    /**
+     * A property value which has a type JSON array
+     * @param value Sequence of Siren property values
+     */
     case class JsArrayValue(value: Seq[Value]) extends Value
 
     /**

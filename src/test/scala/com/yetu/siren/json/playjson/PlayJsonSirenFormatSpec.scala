@@ -98,15 +98,7 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
       assert(Json.fromJson[Action.Method](JsString("foo")).isError)
       assert(Json.fromJson[Action.Method](JsNumber(23)).isError)
     }
-    "fail to deserialize invalid Siren properties collecting all errors" ignore {
-      val result = Json.fromJson[Properties](invalidPropsJson)
-      inside(result) {
-        case JsError(errors) ⇒
-          assert(errors.size === 2)
-          assert(errors.exists(_._1 === JsPath \ "itemCount"))
-          assert(errors.exists(_._1 === JsPath \ "foo"))
-      }
-    }
+
     "fail to deserialize invalid Siren embedded representation collecting all errors" in {
       // properties allow json object so the only error is wrong type in actions
       val result = Json.fromJson[Entity.EmbeddedRepresentation](invalidEmbeddedRepresentationJson)
