@@ -1,15 +1,16 @@
 package com.yetu.siren.json
 package playjson
 
+import com.yetu.siren.model.Property.Value
+
 trait PlayJsonSirenFormat {
 
   import com.yetu.siren.model._
   import Entity._
+  import play.api.libs.functional.syntax._
+  import play.api.libs.json._
 
   import collection.immutable.{ Seq ⇒ ImmutableSeq }
-
-  import play.api.libs.json._
-  import play.api.libs.functional.syntax._
 
   /**
    * Play-JSON format for a Siren root entity.
@@ -31,6 +32,7 @@ trait PlayJsonSirenFormat {
       case e: Entity.EmbeddedLink           ⇒ embeddedLinkWriter writes e
       case e: Entity.EmbeddedRepresentation ⇒ embeddedRepresentationWriter writes e
     }
+
     override def reads(json: JsValue): JsResult[EmbeddedEntity] =
       embeddedLinkReads.reads(json) orElse embeddedRepresentationReads.reads(json)
   }
@@ -89,14 +91,31 @@ trait PlayJsonSirenFormat {
       case Property.StringValue(s)  ⇒ JsString(s)
       case Property.NumberValue(n)  ⇒ JsNumber(n)
       case Property.BooleanValue(b) ⇒ JsBoolean(b)
+      case Property.JsObjectValue(o) ⇒ JsObject(o.map {
+        case (k, v) ⇒ (k, writes(v))
+      })
+      case Property.JsArrayValue(a) ⇒ JsArray(a.map(v ⇒ writes(v)))
       case Property.NullValue       ⇒ JsNull
     }
+
     override def reads(json: JsValue): JsResult[Property.Value] = json match {
       case JsString(s)  ⇒ JsSuccess(Property.StringValue(s))
       case JsNumber(n)  ⇒ JsSuccess(Property.NumberValue(n))
       case JsBoolean(b) ⇒ JsSuccess(Property.BooleanValue(b))
-      case JsNull       ⇒ JsSuccess(Property.NullValue)
-      case _            ⇒ JsError("error.expected.sirenpropertyvalue")
+      case JsObject(obj) ⇒
+        val propsObjValue: Seq[(String, Value)] = obj.map(seq ⇒ {
+          val (key, jsValue) = seq
+          val read = reads(jsValue).getOrElse(Property.NullValue)
+          (key, read)
+        })
+        JsSuccess(Property.JsObjectValue(propsObjValue))
+      case JsArray(arr) ⇒
+        val propsArrayValue: Seq[Value] = arr.map(jsValue ⇒ {
+          reads(jsValue).getOrElse(Property.NullValue)
+        })
+        JsSuccess(Property.JsArrayValue(propsArrayValue))
+      case JsNull ⇒ JsSuccess(Property.NullValue)
+      case _      ⇒ JsError("error.expected.sirenpropertyvalue")
     }
   }
 
@@ -105,9 +124,10 @@ trait PlayJsonSirenFormat {
    */
   implicit val propertiesWriter: Format[Properties] = new Format[Properties] {
     override def writes(properties: Properties): JsValue = {
-      val fields = properties.map (p ⇒ p.name -> Json.toJson(p.value))
+      val fields = properties.map(p ⇒ p.name -> Json.toJson(p.value))
       JsObject(fields)
     }
+
     override def reads(json: JsValue): JsResult[Properties] = json match {
       case JsObject(fields) ⇒
         fields.foldLeft[JsResult[Properties]](JsSuccess(Vector.empty)) {
@@ -131,6 +151,7 @@ trait PlayJsonSirenFormat {
    */
   implicit val methodFormat: Format[Action.Method] = new Format[Action.Method] {
     override def writes(method: Action.Method): JsValue = JsString(method.name)
+
     override def reads(json: JsValue): JsResult[Action.Method] =
       json.asOpt[String] flatMap Action.Method.forName asJsResult "error.expected.method"
   }
@@ -140,6 +161,7 @@ trait PlayJsonSirenFormat {
    */
   implicit val encodingFormat: Format[Action.Encoding] = new Format[Action.Encoding] {
     override def writes(encoding: Action.Encoding): JsValue = JsString(encoding.name)
+
     override def reads(json: JsValue): JsResult[Action.Encoding] =
       json.asOpt[String] flatMap Action.Encoding.forName asJsResult "error.expected.encoding"
   }
@@ -149,6 +171,7 @@ trait PlayJsonSirenFormat {
    */
   implicit val fieldTypeFormat: Format[Action.Field.Type] = new Format[Action.Field.Type] {
     override def writes(fieldType: Action.Field.Type): JsValue = JsString(fieldType.name)
+
     override def reads(json: JsValue): JsResult[Action.Field.Type] =
       json.asOpt[String] flatMap Action.Field.Type.forName asJsResult "error.expected.fieldtype"
   }

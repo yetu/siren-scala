@@ -31,6 +31,34 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
       assert(Json.toJson(props) === propsJson)
     }
 
+    "serialize Siren properties to json Array" in {
+      assert(Json.toJson(propsWithArray) === propsWithArrayJson)
+    }
+
+    "serialize Siren properties to complex json Array" in {
+      assert(Json.toJson(propsWithComplexArray) === propsWithComplexArrayJson)
+    }
+
+    "serialize Siren properties to json object" in {
+      assert(Json.toJson(propsWithJsonObject) === propsWithJsonObjectJson)
+    }
+
+    "deserialize Siren properties" in {
+      assert(Json.fromJson[Properties](propsJson) === JsSuccess(props))
+    }
+
+    "deserialize Siren properties with json Array" in {
+      assert(Json.fromJson[Properties](propsWithArrayJson) === JsSuccess(propsWithArray))
+    }
+
+    "deserialize Siren properties with complex json Array" in {
+      assert(Json.fromJson[Properties](propsWithComplexArrayJson) === JsSuccess(propsWithComplexArray))
+    }
+
+    "deserialize Siren properties with json object" in {
+      assert(Json.fromJson[Properties](propsWithJsonObjectJson) === JsSuccess(propsWithJsonObject))
+    }
+
     "serialize Siren classes" in {
       assert(Json.toJson(classes) === classesJson)
     }
@@ -45,10 +73,6 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
 
     "serialize a complete Siren entity with embedded linked and fully represented sub-entities correctly" in {
       assert(Json.toJson(entity) === entityJson)
-    }
-
-    "deserialize Siren properties" in {
-      assert(Json.fromJson[Properties](propsJson) === JsSuccess(props))
     }
 
     "deserialize Siren classes" in {
@@ -86,22 +110,13 @@ class PlayJsonSirenFormatSpec extends JsonBaseSpec[JsValue]
       assert(Json.fromJson[Action.Method](JsString("foo")).isError)
       assert(Json.fromJson[Action.Method](JsNumber(23)).isError)
     }
-    "fail to deserialize invalid Siren properties collecting all errors" in {
-      val result = Json.fromJson[Properties](invalidPropsJson)
-      inside(result) {
-        case JsError(errors) ⇒
-          assert(errors.size === 2)
-          assert(errors.exists(_._1 === JsPath \ "itemCount"))
-          assert(errors.exists(_._1 === JsPath \ "foo"))
-      }
-    }
+
     "fail to deserialize invalid Siren embedded representation collecting all errors" in {
+      // properties allow json object so the only error is wrong type in actions
       val result = Json.fromJson[Entity.EmbeddedRepresentation](invalidEmbeddedRepresentationJson)
       inside(result) {
         case JsError(errors) ⇒
-          assert(errors.size === 3)
-          assert(errors.exists(_._1 === JsPath \ "properties" \ "customerId"))
-          assert(errors.exists(_._1 === JsPath \ "properties" \ "name"))
+          assert(errors.size === 1)
           assert(errors.exists(_._1 === (JsPath \ "actions")(0) \ "name"))
       }
     }

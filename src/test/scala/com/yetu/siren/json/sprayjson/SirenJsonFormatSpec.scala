@@ -39,8 +39,26 @@ class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with S
     "serialize Siren properties" in {
       props.toJson mustEqual propsJson
     }
+    "serialize Siren properties with array" in {
+      propsWithArray.toJson mustEqual propsWithArrayJson
+    }
+    "serialize Siren properties with complex array" in {
+      propsWithComplexArray.toJson mustEqual propsWithComplexArrayJson
+    }
+    "serialize Siren properties with json object" in {
+      propsWithJsonObject.toJson mustEqual propsWithJsonObjectJson
+    }
     "deserialize Siren properties" in {
       propsJson.convertTo[Properties] must contain theSameElementsAs props
+    }
+    "deserialize Siren properties with array" in {
+      propsWithArrayJson.convertTo[Properties] must contain theSameElementsAs propsWithArray
+    }
+    "deserialize Siren properties with complex array" in {
+      propsWithComplexArrayJson.convertTo[Properties] must contain theSameElementsAs propsWithComplexArray
+    }
+    "deserialize Siren properties with json object" in {
+      propsWithJsonObjectJson.convertTo[Properties] must contain theSameElementsAs propsWithJsonObject
     }
     "serialize Siren classes" in {
       classes.toJson mustEqual classesJson
@@ -60,6 +78,7 @@ class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with S
     "deserialize a Siren embedded representation" in {
       embeddedRepresentationJson.convertTo[Entity.EmbeddedRepresentation] mustEqual embeddedRepresentation
     }
+
     "serialize a Siren action method" in {
       val method: Action.Method = Action.Method.GET
       method.toJson mustEqual JsString("GET")
@@ -95,9 +114,6 @@ class SirenJsonFormatSpec extends JsonBaseSpec[JsValue] with MustMatchers with S
       }
       "deserialize non-array json" in {
         intercept[DeserializationException] { """{ "foo": "bar" }""".parseJson.convertTo[Seq[Link]] }
-      }
-      "deserialize wrong type of Siren properties" in {
-        intercept[DeserializationException] { """{ "xyz" : { "foo": "bar" } }""".parseJson.convertTo[Properties] }
       }
     }
     "serialize a complete Siren entity with embedded linked and fully represented sub-entities correctly" in {

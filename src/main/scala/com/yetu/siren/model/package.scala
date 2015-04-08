@@ -57,6 +57,17 @@ package object model {
      */
     case class BooleanValue(value: Boolean) extends Value
     /**
+     * A property value which has a type JSON object
+     * @param value Sequence of key(String) - value(siren property value) pairs
+     */
+    case class JsObjectValue(value: Seq[(String, Value)]) extends Value
+    /**
+     * A property value which has a type JSON array
+     * @param value Sequence of Siren property values
+     */
+    case class JsArrayValue(value: Seq[Value]) extends Value
+
+    /**
      * The property value that represents a non-existing value.
      */
     case object NullValue extends Value
